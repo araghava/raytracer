@@ -31,8 +31,14 @@ public:
 private:
     // Computes specular/diffuse contributions to an intersection from
     // a given light.
-    Color computeDiffuse(Light *light, const Intersection &intersect);
-    Color computeSpecular(Light *light, const Intersection &intersect);
+    Color computeDiffuse(Light *light,
+                         const Intersection &intersect,
+                         float spec_contrib,
+                         float &diff_contrib);
+    Color computeSpecular(Light *light,
+                          const Intersection &intersect,
+                          float &spec_contrib);
+    bool castShadowRays(Light *light, const Intersection &intersect);
 
     std::vector<Object *> objectList;
     std::vector<Light *> lightList;

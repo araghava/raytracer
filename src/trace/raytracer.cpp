@@ -62,6 +62,7 @@ bool Raytracer::render(const std::string &outpath)
                 for (int jj = a_j; jj < a_j + renderParms.antialias; jj++)
                 {
                     direction.y = (jj - 0.5*pxHeight) / zoomFactor;
+                    direction.normalize();
                     avg += tracePrimaryRay(camera, direction);
                 }
             }

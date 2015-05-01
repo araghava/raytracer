@@ -8,6 +8,7 @@
 #include "trace/raytracer.h"
 #include "trace/screen.h"
 #include "objects/sphere.h"
+#include "objects/plane.h"
 
 void usage()
 {
@@ -29,8 +30,11 @@ int main(int argc, char **argv)
     Raytracer tracer(parms, cam);
     std::string out = "images/out.tga";
 
-    tracer.addLight(new Light(Vector(-5, 5, -3), Color(1, 0, 1), 0.8));
-    tracer.addObject(new Sphere(Vector(0, 0, -10), 2));
+    tracer.addLight(new Light(Vector(-5, 4, 3), Color(0, 0, 1), 0.5));
+    tracer.addObject(new Sphere(Vector(0, 0, -3), 1));
+    tracer.addObject(new Plane(Vector(0, -2, -1),
+                               Vector(-1, -2, 1),
+                               Vector(1, -2, 1)));
     tracer.render(out);
     return 0;
 }

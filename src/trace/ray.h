@@ -10,16 +10,12 @@ class Ray {
 public:
     Ray() : origin(Vector()),
             direction(Vector()),
-            remaining_casts(-1)
-    {
-        origin += RAY_INTERSECTION_BIAS;
-        direction.normalize();
-    }
+            remaining_casts(-1) {}
     Ray(Vector o, Vector d, int r) :
         origin(o), direction(d), remaining_casts(r)
     {
-        origin += RAY_INTERSECTION_BIAS;
         direction.normalize();
+        origin += direction*RAY_INTERSECTION_BIAS;
     }
 
     // Origin and direction that defines this ray.

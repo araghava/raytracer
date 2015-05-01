@@ -31,7 +31,7 @@ public:
     }
 
     Color operator*(float scale) const
-    { return Color(scale*r, scale*b, scale*g); }
+    { return Color(scale*r, scale*g, scale*b); }
     Color &operator*=(float scale)
     {
         r *= scale; g *= scale; b *= scale;
@@ -39,7 +39,7 @@ public:
     }
 
     Color operator/(float scale) const
-    { return Color(scale/r, scale/b, scale/g); }
+    { return Color(r/scale, g/scale, b/scale); }
     Color &operator/=(float scale)
     {
         r /= scale; g /= scale; b /= scale;

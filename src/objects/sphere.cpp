@@ -1,6 +1,11 @@
 #include "sphere.h"
+
 #include <cstdio>
+#include <cstdlib>
+#include <algorithm>
 #include <math.h>
+
+#include "../core/util.h"
 
 Sphere::~Sphere()
 {
@@ -49,4 +54,26 @@ bool Sphere::intersect(const Ray &ray,
     intersection.pt = pt;
     intersection.nml = nml;
     return true;
+}
+
+int SphereLight::getNumSamples() const
+{
+    return std::max(12*12, std::min((int)(4*M_PI*radius*radius), 256));
+}
+
+void SphereLight::sample(Vector &pos) const
+{
+
+    Vector random_unit_vector;
+
+    float angle = UTILrandomFloatBetween(0.0, 2.0 * M_PI);
+    float x = UTILrandomFloatBetween(0.0, 2.0) - 1.0;
+    float s = sqrtf(1.0 - x * x);
+
+    random_unit_vector.x = x;
+    random_unit_vector.y = s * cos(angle);
+    random_unit_vector.z = s * sin(angle);
+
+    // A random point on the surface of the sphere.
+    pos = position + random_unit_vector*radius;
 }

@@ -8,7 +8,7 @@
 struct Intersection;
 class Ray;
 
-// Abstract Object implementation.
+// Abstract Object.
 class Object {
 public:
              Object(const Vector &c)
@@ -28,16 +28,40 @@ private:
     Vector center;
 };
 
+// Abstract Light.
 class Light {
 public:
             Light(const Vector &p, Color c, float inten)
                 : position(p)
                 , color(c)
                 , intensity(inten) {}
-           ~Light() {}
+    virtual ~Light() {}
+
+    // This gets the number of samples to use when trying to determine luminance
+    // from a light. This is needed for area lights (to create soft shadows).
+    virtual int getNumSamples() const = 0;
+
+    // Uniform random sampling on the area of this light. Fills "point" with a random
+    // point on the surface of the light object.
+    virtual void sample(Vector &point) const = 0;
+
     Vector position;
     Color color;
     float intensity;
+};
+
+class PointLight : public Light {
+public:
+            PointLight(const Vector &p, Color c, float inten)
+                : Light(p, c, inten) {}
+    virtual ~PointLight() {}
+
+    // A point light isn't an area, so we can only take one sample.
+    virtual int getNumSamples() const
+    { return 1; }
+
+    virtual void sample(Vector &point) const
+    { point = position; }
 };
 
 #endif

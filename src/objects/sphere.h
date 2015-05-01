@@ -24,4 +24,23 @@ private:
     float radius;
 };
 
+// Sphere area light implementation.
+class SphereLight : public Light {
+public:
+             SphereLight(const Vector &p, Color c, float inten,
+                         float rad)
+                : Light(p, c, inten) { radius = rad; }
+    virtual ~SphereLight() {}
+
+    // We use a heuristic to decide how many samples to take on the sphere.
+    // A reasonable one is min(9, max(surface_area/10, 128)).
+    virtual int getNumSamples() const;
+
+    // Uniform random sampling on the surface of the sphere.
+    virtual void sample(Vector &point) const;
+
+private:
+    float radius;
+};
+
 #endif

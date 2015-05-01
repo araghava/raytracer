@@ -43,9 +43,12 @@ bool World::getClosestIntersection(Ray &ray,
 Color World::computeDiffuse(Light *light,
                             const Intersection &intersect,
                             float spec_contrib,
-                            float &diff_contrib)
+                            float &diff_contrib,
+                            const Vector &sample_pos)
 {
-    Vector pos_off = (light->position - intersect.pt).normalize();
+    Color c(0.0, 0.0, 0.0);
+
+    Vector pos_off = (sample_pos - intersect.pt).normalize();
 
     // The amount this light contributes is proportional to the dot
     // product of the relative light position and surface normal.
@@ -55,19 +58,19 @@ Color World::computeDiffuse(Light *light,
     diff_contrib *= (1 - spec_contrib);
 
     if (diff_contrib >= 0.0)
-        return light->color * (light->intensity * diff_contrib);
-
-    return Color();
+        c = light->color * (light->intensity * diff_contrib);
+    return c;
 }
 
 Color World::computeSpecular(Light *light,
                              const Intersection &intersect,
-                             float &spec_contrib)
+                             float &spec_contrib,
+                             const Vector &sample_pos)
 {
     Color c(0.0, 0.0, 0.0);
 
     Vector ray_dir = (intersect.ray.origin - intersect.pt).normalize();
-    Vector pos_off = (light->position - intersect.pt).normalize();
+    Vector pos_off = (sample_pos - intersect.pt).normalize();
     Vector refl_vect = intersect.nml * 2 * pos_off.dot(intersect.nml) - pos_off;
 
     // How much specular is contributed, proportional to the dot product
@@ -78,20 +81,23 @@ Color World::computeSpecular(Light *light,
         spec_contrib = 0;
         return c;
     }
-    spec_contrib = pow(spec_contrib, 55);
+
+    float shininess = 25.0;
+    spec_contrib = pow(spec_contrib, shininess) * (shininess / 100.0);
+
     float amt = spec_contrib * light->intensity;
-    c.r = amt;
-    c.g = amt;
-    c.b = amt;
+    c.r += amt;
+    c.g += amt;
+    c.b += amt;
+
     return c;
 }
 
-bool World::castShadowRays(Light *light, const Intersection &intersect)
+bool World::castShadowRay(const Vector &position, const Intersection &intersect)
 {
-    // TODO: use randomized sampling.
-    Ray shadow_ray(intersect.pt, (light->position - intersect.pt).normalize(), 25);
+    Ray shadow_ray(intersect.pt, (position - intersect.pt).normalize(), 25);
     Intersection inter;
-    float lightdist2 = (light->position - intersect.pt).length2();
+    float lightdist2 = (position - intersect.pt).length2();
 
     if (getClosestIntersection(shadow_ray, inter))
     {
@@ -113,13 +119,32 @@ Color World::computeLighting(const Intersection &intersect)
         float spec_contrib;
         float diff_contrib;
 
-        // If the light rays can actually reach the intersection (it's not
-        // blocked by an object), add the contribution.
-        if (!castShadowRays(lightList[i], intersect))
+        // We do uniform random sampling on the surface area of this light source,
+        // so the shadows will be soft.
+        // In real life, point lights do not exist, so we get this for free. But in
+        // computers... it's not so easy...
+        int samples = lightList[i]->getNumSamples();
+
+        Color cur_diff(0.0, 0.0, 0.0);
+        Color cur_spec(0.0, 0.0, 0.0);
+        for (int j = 0; j < samples; j++)
         {
-            specular += computeSpecular(lightList[i], intersect, spec_contrib);
-            diffuse += computeDiffuse(lightList[i], intersect, spec_contrib, diff_contrib);
+            Vector sample_pos;
+            lightList[i]->sample(sample_pos);
+            if (!castShadowRay(sample_pos, intersect))
+            {
+                cur_spec += computeSpecular(lightList[i],
+                                intersect, spec_contrib, sample_pos);
+                cur_diff += computeDiffuse(lightList[i],
+                                intersect, spec_contrib, diff_contrib, sample_pos);
+            }
         }
+
+        cur_diff /= (1.0 * samples);
+        cur_spec /= (1.0 * samples);
+        diffuse += cur_diff;
+        specular += cur_spec;
     }
+
     return diffuse + specular;
 }

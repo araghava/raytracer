@@ -34,11 +34,13 @@ private:
     Color computeDiffuse(Light *light,
                          const Intersection &intersect,
                          float spec_contrib,
-                         float &diff_contrib);
+                         float &diff_contrib,
+                         const Vector &sample_pos);
     Color computeSpecular(Light *light,
                           const Intersection &intersect,
-                          float &spec_contrib);
-    bool castShadowRays(Light *light, const Intersection &intersect);
+                          float &spec_contrib,
+                          const Vector &sample_pos);
+    bool castShadowRay(const Vector &sample_pos, const Intersection &intersect);
 
     std::vector<Object *> objectList;
     std::vector<Light *> lightList;

@@ -10,11 +10,11 @@
 
 struct RenderParms {
     // Width and height, in pixels.
-    int width = 512;
-    int height = 512;
+    int width = 256;
+    int height = 256;
 
     // Default to 4x4 antialiasing (split each pixel into 16 and average).
-    int antialias = 4;
+    int antialias = 2;
 };
 
 class Raytracer {

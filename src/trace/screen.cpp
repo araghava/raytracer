@@ -6,6 +6,7 @@ Screen::Screen(int _w, int _h)
 {
     width = _w;
     height = _h;
+    max_component = -1;
     data = (Color *)malloc(sizeof(Color) * width * height);
 }
 
@@ -38,9 +39,11 @@ bool Screen::writeImage(const char *file)
     o.put(0);
 
     for (int i = 0; i < width*height; i++) {
-        o.put((unsigned char)(data[i].b * 255));
-        o.put((unsigned char)(data[i].g * 255));
-        o.put((unsigned char)(data[i].r * 255));
+        // Scale everything to maximum color, in order for color values to
+        // be in the range [0, 255].
+        o.put((unsigned char)((data[i].b / max_component) * 255));
+        o.put((unsigned char)((data[i].g / max_component) * 255));
+        o.put((unsigned char)((data[i].r / max_component) * 255));
         o.put((unsigned char)(data[i].a * 255));
     }
 

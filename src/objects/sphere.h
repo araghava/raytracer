@@ -9,14 +9,16 @@
 class Sphere : public Object {
 public:
              Sphere(const Vector c_, float rad)
-                 : radius(rad) { setCenter(c_); }
+                 : Object(c_),
+                   radius(rad) {}
     virtual ~Sphere();
 
     float getRadius()
     { return radius; }
 
     // Virtual implementations.
-    virtual bool intersect(const Ray &ray, Intersection &intersection);
+    virtual bool intersect(const Ray &ray,
+                           Intersection &intersection);
     virtual bool contains(const Vector &point);
 private:
     float radius;

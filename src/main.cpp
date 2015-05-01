@@ -23,10 +23,14 @@ int main(int argc, char **argv)
         return 0;
     }*/
 
+    Camera cam;
     RenderParms parms;
-    Raytracer tracer(parms);
+
+    Raytracer tracer(parms, cam);
     std::string out = "images/out.tga";
 
+    tracer.addLight(new Light(Vector(-5, 5, -3), Color(1, 0, 1), 0.8));
+    tracer.addObject(new Sphere(Vector(0, 0, -10), 2));
     tracer.render(out);
     return 0;
 }

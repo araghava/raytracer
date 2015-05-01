@@ -1,11 +1,11 @@
 #include "raytracer.h"
 
-#include "screen.h"
 #include "../core/vector3.h"
 #include "../core/color.h"
 
-Raytracer::Raytracer(const RenderParms &parms)
+Raytracer::Raytracer(const RenderParms &parms, const Camera &camera)
     : renderParms(parms)
+    , cam(camera)
 {
 }
 
@@ -13,56 +13,63 @@ Raytracer::~Raytracer()
 {
 }
 
+void Raytracer::addObject(Object *obj)
+{
+    world.addObject(obj);
+}
+
+void Raytracer::addLight(Light *light)
+{
+    world.addLight(light);
+}
+
+Color Raytracer::tracePrimaryRay(const Vector &origin,
+                                 const Vector &direction)
+{
+    Intersection intersection;
+    Ray ray(origin, direction, 25);
+
+    // If this ray has intersected any objects.
+    if (world.getClosestIntersection(ray, intersection))
+        return world.computeLighting(intersection);
+
+    return Color();
+}
+
 bool Raytracer::render(const std::string &outpath)
 {
-    // Oversample the image using the antialiasing factor.
-    int pxWidth = renderParms.antialias * renderParms.width;
-    int pxHeight = renderParms.antialias * renderParms.height;
-    int minDim = std::min(pxWidth, pxHeight);
-
-    // The eye originates at the origin.
-    Vector origin(0.0, 0.0, 0.0);
-
-    // Camera faces in the -z direction (RHR with +x at right, +y up).
-    Vector direction(0.0, 0.0, -1.0);
     Screen screen(renderParms.width, renderParms.height);
+    int pxWidth = renderParms.width * renderParms.antialias;
+    int pxHeight = renderParms.height * renderParms.antialias;
+    int pxSmaller = std::min(pxWidth, pxHeight);
 
-    Color *colorBuffer = (Color *)malloc(pxWidth * pxHeight * sizeof(Color));
-    float zoomFactor = renderParms.antialias * minDim;
+    float zoomFactor = pxSmaller;
+    Vector camera(0.0, 0.0, 0.0);
+    Vector direction(0.0, 0.0, -1.0);
 
     // TODO: parallelize
-    for (int i = 0; i < pxWidth; i++)
-    {
-        direction.x = (i - pxWidth/2.0) / zoomFactor;
-        for (int j = 0; j < pxHeight; j++)
-        {
-            direction.y = (pxHeight/2.0 - j) / zoomFactor;
-            colorBuffer[i + j*pxWidth] = Color(1.0*i/pxWidth, 1.0*j/pxHeight, 0.);//tracePrimaryRay(origin, direction);
-        }
-    }
-
-    // Handle antialiasing and write out the file.
     for (int i = 0; i < renderParms.width; i++)
     {
         for (int j = 0; j < renderParms.height; j++)
         {
-            Color sum(0.0, 0.0, 0.0);
-            for (int ii = 0; ii < renderParms.antialias; ii++)
+            int a_i = i * renderParms.antialias;
+            int a_j = j * renderParms.antialias;
+
+            Color avg(0.0, 0.0, 0.0);
+            for (int ii = a_i; ii < a_i + renderParms.antialias; ii++)
             {
-                for (int jj = 0; jj < renderParms.antialias; jj++)
+                direction.x = (ii - 0.5*pxWidth) / zoomFactor;
+                for (int jj = a_j; jj < a_j + renderParms.antialias; jj++)
                 {
-                    sum += colorBuffer[
-                        (i*renderParms.antialias + ii) +
-                        pxWidth * (j * renderParms.antialias) + jj
-                    ];
+                    direction.y = (jj - 0.5*pxHeight) / zoomFactor;
+                    avg += tracePrimaryRay(camera, direction);
                 }
             }
-            sum /= 1.0*(renderParms.antialias * renderParms.antialias);
-            screen.setPixel(i, j, sum);
+            avg /= (1.0 * renderParms.antialias * renderParms.antialias);
+            screen.setPixel(i, j, avg);
         }
     }
 
-    free(colorBuffer);
     screen.writeImage(outpath.c_str());
     return true;
 }

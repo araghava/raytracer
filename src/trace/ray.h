@@ -1,12 +1,11 @@
 #ifndef __RAY_H_
 #define __RAY_H_
 
+#include "../core/constants.h"
 #include "../core/vector3.h"
+#include "../objects/object.h"
 
-// To avoid ray intersections that occur at the exact same spot repeatedly,
-// we add a little bias at the ray origin.
-static const int RAY_INTERSECTION_BIAS = 1e-4;
-
+class Object;
 class Ray {
 public:
     Ray() : origin(Vector()),
@@ -23,11 +22,6 @@ public:
         direction.normalize();
     }
 
-    const Vector &getOrigin()
-    { return origin; }
-    const Vector &getDirection()
-    { return origin; }
-private:
     // Origin and direction that defines this ray.
     Vector origin;
     Vector direction;
@@ -36,11 +30,11 @@ private:
     int remaining_casts;
 };
 
-struct Intersection {
+class Intersection {
+public:
     Ray ray;
-    //Object *object;
+    Object *object;
     Vector pt, nml;
-    bool done;
 };
 
 #endif

@@ -47,6 +47,12 @@ bool Sphere::intersect(const Ray &ray,
     Vector pt = origin + (direction*dist);
     Vector nml = (pt - getCenter()).normalize();
 
+    float intersect_dist = (pt - ray.origin).length();
+
+    // The intersection is too far from the origin of the ray.
+    if (intersect_dist >= RAY_FAR_DISTANCE)
+        return false;
+
     if (direction.dot(nml) > 0)
         nml *= -1;
 

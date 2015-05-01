@@ -1,5 +1,6 @@
 #include "world.h"
 #include <cstdlib>
+#include <cfloat>
 #include <math.h>
 
 World::World()
@@ -17,7 +18,7 @@ World::~World()
 bool World::getClosestIntersection(Ray &ray,
                                    Intersection &intersect)
 {
-    float min_dist = 1e6;
+    float min_dist = FLT_MAX;
     bool found = false;
 
     // Check each object for intersection.

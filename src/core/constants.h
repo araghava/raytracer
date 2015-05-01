@@ -7,4 +7,6 @@ extern const float TOLERANCE;
 // we add a little bias at the ray origin.
 extern const float RAY_INTERSECTION_BIAS;
 
+extern const float RAY_NEAR_DISTANCE;
+extern const float RAY_FAR_DISTANCE;
 #endif

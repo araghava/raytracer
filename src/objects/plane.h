@@ -26,6 +26,9 @@ public:
                            Intersection &intersection)
     {
         Vector nml = ((p2 - p1).cross(p3 - p2)).normalize();
+        if (ray.direction.dot(nml) > 0)
+            nml = nml * -1;
+
         float dp = ray.direction.dot(nml);
 
         // Ray and plane are parallel.
@@ -36,6 +39,13 @@ public:
 
         // The intersection point is behind where we fired the ray.
         if (u < 0)
+            return false;
+
+        Vector pt = ray.origin + ray.direction*u;
+        float dist = (pt - ray.origin).length();
+
+        // The intersection is too far for it to count.
+        if (dist >= RAY_FAR_DISTANCE)
             return false;
 
         intersection.object = this;

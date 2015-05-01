@@ -41,6 +41,7 @@ bool Raytracer::render(const std::string &outpath)
 
     float zoomFactor = pxSmaller;
 
+    // TODO: try using pthreads for multithreading, it might be faster than OpenMP
     #pragma omp parallel for
     for (int i = 0; i < renderParms.width; i++)
     {

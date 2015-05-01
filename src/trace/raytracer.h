@@ -10,8 +10,8 @@
 
 struct RenderParms {
     // Width and height, in pixels.
-    int width = 256;
-    int height = 256;
+    int width = 1024;
+    int height = 1024;
 
     // Default to 4x4 antialiasing (split each pixel into 16 and average).
     int antialias = 2;

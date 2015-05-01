@@ -31,7 +31,7 @@ int main(int argc, char **argv)
     std::string out = "../images/out.tga";
 
     tracer.addLight(new SphereLight(Vector(1.5, 2, -2), Color(1, 1, 1), 0.5, 0.25));
-    tracer.addLight(new SphereLight(Vector(0, 2, -2), Color(1,1,1), 1, 0.25));
+//    tracer.addLight(new SphereLight(Vector(0, 2, -2), Color(1,1,1), 1, 0.25));
 //    tracer.addLight(new SphereLight(Vector(-1.5, 2, -2), Color(1, 0, 0), 0.5, 0.1));
 //    tracer.addLight(new SphereLight(Vector(0, 5, -12), Color(1, 1, 1), 0.4, 0.5));
     //tracer.addLight(new PointLight(Vector(-1.5, 2, -2), Color(1, 0, 0), 0.5));

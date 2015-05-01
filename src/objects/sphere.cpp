@@ -58,7 +58,7 @@ bool Sphere::intersect(const Ray &ray,
 
 int SphereLight::getNumSamples() const
 {
-    return std::max(12*12, std::min((int)(4*M_PI*radius*radius), 256));
+    return 8 * 8;
 }
 
 void SphereLight::sample(Vector &pos) const

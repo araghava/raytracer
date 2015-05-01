@@ -32,8 +32,7 @@ public:
                 : Light(p, c, inten) { radius = rad; }
     virtual ~SphereLight() {}
 
-    // We use a heuristic to decide how many samples to take on the sphere.
-    // A reasonable one is min(9, max(surface_area/10, 128)).
+    // Take 8 * 8 random samples on the sphere.
     virtual int getNumSamples() const;
 
     // Uniform random sampling on the surface of the sphere.

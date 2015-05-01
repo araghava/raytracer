@@ -40,6 +40,14 @@ bool World::getClosestIntersection(Ray &ray,
     return found;
 }
 
+Color World::traceRay (Ray &ray)
+{
+    Intersection inter;
+    if (getClosestIntersection(ray, inter))
+        return computeLighting(inter);
+    return Color();
+}
+
 Color World::computeDiffuse(Light *light,
                             const Intersection &intersect,
                             float spec_contrib,

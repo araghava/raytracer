@@ -25,10 +25,12 @@ public:
     bool getClosestIntersection(Ray &ray,
                                 Intersection &intersect);
 
+    Color traceRay(Ray &ray);
+private:
     // Computes lighting at a certain intersection.
     // Diffuse, specular, reflective, refractive components.
     Color computeLighting(const Intersection &intersect);
-private:
+
     // Computes specular/diffuse contributions to an intersection from
     // a given light.
     Color computeDiffuse(Light *light,

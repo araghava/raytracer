@@ -29,11 +29,7 @@ Color Raytracer::tracePrimaryRay(const Vector &origin,
     Intersection intersection;
     Ray ray(origin, direction, 25);
 
-    // If this ray has intersected any objects.
-    if (world.getClosestIntersection(ray, intersection))
-        return world.computeLighting(intersection);
-
-    return Color();
+    return world.traceRay(ray);
 }
 
 bool Raytracer::render(const std::string &outpath)

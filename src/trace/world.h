@@ -8,6 +8,7 @@
 
 #include "../objects/object.h"
 #include "../core/color.h"
+#include "../core/util.h"
 
 class World {
 public:
@@ -42,6 +43,12 @@ private:
                           const Intersection &intersect,
                           float &spec_contrib,
                           const Vector &sample_pos);
+
+    // Computes refractive and reflective color contributions.
+    Color computeRefractiveReflective(const Intersection &intersect);
+
+    // Casts a shadow ray towards the sampled light position. If there's an object
+    // between the light and the intersection, it returns true, if not, it returns false.
     bool castShadowRay(const Vector &sample_pos, const Intersection &intersect);
 
     std::vector<Object *> objectList;

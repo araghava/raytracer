@@ -1,23 +1,28 @@
 CC = g++
-CFLAGS = -O3 -Wall -std=c++11 -fopenmp
+CFLAGS = -O3 -Wall -std=c++11
+LINKS = -lpthread
 TARGET = main
 
 all: $(TARGET)
 
 DEPS = core/vector3.o \
     core/constants.o \
+    core/util.o \
 	objects/sphere.o \
 	trace/screen.o \
 	trace/world.o \
 	trace/raytracer.o \
 
+
 $(TARGET): clean $(DEPS) $(TARGET).cpp
-	$(CC) $(CFLAGS) $(TARGET).cpp -o raytrace $(DEPS)
+	$(CC) $(CFLAGS) $(TARGET).cpp -o raytrace $(DEPS) $(LINKS)
 
 core/vector3.o: core/vector3.cpp core/vector3.h
 	$(CC) $(CFLAGS) -c core/vector3.cpp -o core/vector3.o
 core/constants.o: core/constants.cpp core/constants.h
 	$(CC) $(CFLAGS) -c core/constants.cpp -o core/constants.o
+core/util.o: core/util.cpp core/util.h
+	$(CC) $(CFLAGS) -c core/util.cpp -o core/util.o
 trace/screen.o: trace/screen.cpp trace/screen.h
 	$(CC) $(CFLAGS) -c trace/screen.cpp -o trace/screen.o
 trace/raytracer.o: trace/raytracer.cpp trace/raytracer.h

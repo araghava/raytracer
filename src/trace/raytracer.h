@@ -8,6 +8,8 @@
 #include "world.h"
 #include "screen.h"
 
+class Raytracer;
+
 struct RenderParms {
     // Width and height, in pixels.
     int width = 1024;
@@ -15,6 +17,18 @@ struct RenderParms {
 
     // Default to 4x4 antialiasing (split each pixel into 16 and average).
     int antialias = 2;
+};
+
+// Threading structure for raytracing.
+struct RaytraceThreadParms {
+    Raytracer *raytracer;
+    Screen *screen;
+    const RenderParms *parms;
+
+    int start_row;
+    int end_row;
+
+    Color **buffer;
 };
 
 class Raytracer {
@@ -31,10 +45,11 @@ public:
     void addLight(Light *light);
 
     bool render(const std::string &out_path);
-private:
+
     // Fires primary rays. These are rays that originate at the camera.
     Color tracePrimaryRay(const Vector &origin,
                           const Vector &direction);
+private:
 
     const RenderParms &renderParms;
     const Camera &cam;

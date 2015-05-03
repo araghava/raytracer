@@ -42,7 +42,7 @@ public:
             return false;
 
         Vector pt = ray.origin + ray.direction*u;
-        float dist = (pt - ray.origin).length();
+        float dist = (pt - ray.origin).length2();
 
         // The intersection is too far for it to count.
         if (dist >= RAY_FAR_DISTANCE)

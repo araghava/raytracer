@@ -46,7 +46,7 @@ Color World::traceRay (Ray &ray)
     Intersection inter;
     if (getClosestIntersection(ray, inter))
         return computeLighting(inter);
-    return Color();
+    return Color(0, 0, 0);
 }
 
 Color World::computeDiffuse(Light *light,
@@ -80,7 +80,7 @@ Color World::computeSpecular(Light *light,
 
     Vector ray_dir = (intersect.ray.origin - intersect.pt).normalize();
     Vector pos_off = (sample_pos - intersect.pt).normalize();
-    Vector refl_vect = intersect.nml * 2 * pos_off.dot(intersect.nml) - pos_off;
+    Vector refl_vect = UTILreflectVector(pos_off, intersect.nml);
 
     // How much specular is contributed, proportional to the dot product
     // of the reverse incident ray direction and reflection vector.
@@ -104,7 +104,7 @@ Color World::computeSpecular(Light *light,
 
 bool World::castShadowRay(const Vector &position, const Intersection &intersect)
 {
-    Ray shadow_ray(intersect.pt, (position - intersect.pt).normalize(), 25);
+    Ray shadow_ray(intersect.pt, (position - intersect.pt).normalize(), -1);
     Intersection inter;
     float lightdist2 = (position - intersect.pt).length2();
 
@@ -116,6 +116,18 @@ bool World::castShadowRay(const Vector &position, const Intersection &intersect)
     }
 
     return false;
+}
+
+Color World::computeRefractiveReflective(const Intersection &intersect)
+{
+    if (intersect.ray.remaining_casts <= 0)
+        return Color(0, 0, 0);
+
+    Vector incident = intersect.pt - intersect.ray.origin;
+    Ray r(intersect.pt, UTILreflectVector(incident, intersect.nml),
+          intersect.ray.remaining_casts - 1);
+
+    return traceRay(r) * 0.3;
 }
 
 Color World::computeLighting(const Intersection &intersect)
@@ -155,5 +167,5 @@ Color World::computeLighting(const Intersection &intersect)
         specular += cur_spec;
     }
 
-    return diffuse + specular;
+    return diffuse + specular + computeRefractiveReflective(intersect);
 }

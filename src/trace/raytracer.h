@@ -33,7 +33,7 @@ struct RaytraceThreadParms {
 
 class Raytracer {
 public:
-            Raytracer(const RenderParms &parms, const Camera &cam);
+            Raytracer();
            ~Raytracer();
 
     // Caller must allocate memory for the object, this class will
@@ -43,6 +43,8 @@ public:
     // Caller must allocate memory for the object, this class will
     // then take ownership.
     void addLight(Light *light);
+    void setParms(RenderParms parms)
+    { renderParms = parms; }
 
     bool render(const std::string &out_path);
 
@@ -51,8 +53,7 @@ public:
                           const Vector &direction);
 private:
 
-    const RenderParms &renderParms;
-    const Camera &cam;
+    RenderParms renderParms;
 
     std::vector<Object *> objectList;
     std::vector<Light *> lightList;

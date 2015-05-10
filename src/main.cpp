@@ -1,45 +1,86 @@
 #include <cstdlib>
 #include <stdio.h>
 #include <unistd.h>
+#include <string.h>
+#include <iostream>
+#include <istream>
+#include <fstream>
 
-#include "core/color.h"
-#include "core/vector3.h"
-#include "trace/ray.h"
 #include "trace/raytracer.h"
-#include "trace/screen.h"
-#include "objects/sphere.h"
-#include "objects/plane.h"
+#include "trace/parser.h"
+
+static const char *DEFAULT_IMAGE_OUT = "../images/out.tga";
 
 void usage()
 {
-    printf("some usage...\n");
+    printf("\nRaytracer\n");
+    printf("    Reads scene from a file, sample scenes are in ../scenes/\n");
+    printf("    Parameters:\n");
+    printf("        -o    output file, defaults to ../images/out.tga\n");
+    printf("        -s    scene file. if not provided it reads from standard input\n");
+
+    printf("\n");
 }
 
 int main(int argc, char **argv)
 {
-    /*
     if (argc <= 1)
     {
         usage();
         return 0;
-    }*/
+    }
 
-    Camera cam;
-    RenderParms parms;
+    char *scene_file = 0;
+    char *out_file = 0;
+    int c;
 
-    Raytracer tracer(parms, cam);
-    std::string out = "../images/out.tga";
+    std::ifstream scene;
+    while ((c = getopt(argc, argv, "o:s:")) != -1)
+    {
+        switch(c)
+        {
+            case 'o':
+                out_file = optarg;
+                break;
+            case 's':
+                scene_file = optarg;
+                break;
+            default:
+                abort();
+        }
+    }
 
-    tracer.addLight(new SphereLight(Vector(-1.5, 0.5, -2), Color(1, 1, 1), 0.6, 0.20));
-//    tracer.addLight(new PointLight(Vector(-1.5, 0.5, -10), Color(0, 1, 1), 0.6));
-//    tracer.addLight(new SphereLight(Vector(0, 2, -2), Color(1,1,1), 1, 0.25));
-//    tracer.addLight(new SphereLight(Vector(-1.5, 2, -2), Color(1, 0, 0), 0.5, 0.1));
-//    tracer.addLight(new SphereLight(Vector(0, 5, -12), Color(1, 1, 1), 0.4, 0.5));
-    tracer.addObject(new Sphere(Vector(-1, 0, -4), 0.5));
-    tracer.addObject(new Sphere(Vector(0, 0, -3), 0.5));
-//    tracer.addObject(new Sphere(Vector(1, 0, -60), 25));
-    tracer.addObject(new Plane(Vector(0, -0.5, -1), Vector(-1, -0.5, 1), Vector(1, -0.5, 1)));
-//    tracer.addObject(new Plane(Vector(1, 0, -10), Vector(-1, 0, -10), Vector(0, 1, -10)));
+    Raytracer tracer;
+    Parser parser;
+    std::string err, out;
+
+    if (scene_file)
+    {
+        std::ifstream scene;
+        scene.open(scene_file, std::ifstream::in);
+
+        if (!parser.createWorld(&tracer, err, scene))
+        {
+            std::cout << err << "\n";
+            return 1;
+        }
+        scene.close();
+    }
+    else
+    {
+        if (!parser.createWorld(&tracer, err, std::cin))
+        {
+            std::cout << err << "\n";
+            return 1;
+        }
+    }
+
+    out = DEFAULT_IMAGE_OUT;
+    if (out_file)
+        out = out_file;
+
+
+    scene.close();
     tracer.render(out);
     return 0;
 }

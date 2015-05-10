@@ -12,7 +12,7 @@ DEPS = core/vector3.o \
 	trace/screen.o \
 	trace/world.o \
 	trace/raytracer.o \
-
+	trace/parser.o \
 
 $(TARGET): clean $(DEPS) $(TARGET).cpp
 	$(CC) $(CFLAGS) $(TARGET).cpp -o raytrace $(DEPS) $(LINKS)
@@ -29,6 +29,8 @@ trace/raytracer.o: trace/raytracer.cpp trace/raytracer.h
 	$(CC) $(CFLAGS) -c trace/raytracer.cpp -o trace/raytracer.o
 trace/world.o: trace/world.cpp trace/world.h
 	$(CC) $(CFLAGS) -c trace/world.cpp -o trace/world.o
+trace/parser.o: trace/parser.cpp trace/parser.h
+	$(CC) $(CFLAGS) -c trace/parser.cpp -o trace/parser.o
 objects/object.o: objects/object.cpp objects/object.h
 	$(CC) $(CFLAGS) -c objects/object.cpp -o objects/object.o
 

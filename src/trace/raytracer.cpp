@@ -8,10 +8,10 @@
 #include "../core/color.h"
 #include "../core/constants.h"
 
-Raytracer::Raytracer(const RenderParms &parms, const Camera &camera)
-    : renderParms(parms)
-    , cam(camera)
+Raytracer::Raytracer()
 {
+    RenderParms p;
+    setParms(p);
 }
 
 Raytracer::~Raytracer()

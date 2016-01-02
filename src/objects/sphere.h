@@ -8,38 +8,36 @@
 // Sphere object implementation.
 class Sphere : public Object {
 public:
-             Sphere(const Vector c_, float rad)
-                 : Object(c_),
-                   radius(rad) {}
-    virtual ~Sphere();
+  Sphere(const Vector c_, float rad) : Object(c_), radius(rad) {}
+  virtual ~Sphere();
 
-    float getRadius()
-    { return radius; }
+  float getRadius() { return radius; }
 
-    // Virtual implementations.
-    virtual bool intersect(const Ray &ray,
-                           Intersection &intersection);
-    virtual bool contains(const Vector &point);
+  // Virtual implementations.
+  virtual bool intersect(const Ray &ray, Intersection &intersection);
+  virtual bool contains(const Vector &point);
+
 private:
-    float radius;
+  float radius;
 };
 
 // Sphere area light implementation.
 class SphereLight : public Light {
 public:
-             SphereLight(const Vector &p, Color c, float inten,
-                         float rad)
-                : Light(p, c, inten) { radius = rad; }
-    virtual ~SphereLight() {}
+  SphereLight(const Vector &p, Color c, float inten, float rad)
+      : Light(p, c, inten) {
+    radius = rad;
+  }
+  virtual ~SphereLight() {}
 
-    // Take 8 * 8 random samples on the sphere.
-    virtual int getNumSamples() const;
+  // Take 8 * 8 random samples on the sphere.
+  virtual int getNumSamples() const;
 
-    // Uniform random sampling on the surface of the sphere.
-    virtual void sample(Vector &point) const;
+  // Uniform random sampling on the surface of the sphere.
+  virtual void sample(Vector &point) const;
 
 private:
-    float radius;
+  float radius;
 };
 
 #endif

@@ -1,6 +1,6 @@
 CC = g++
 CFLAGS = -O3 -Wall -std=c++11
-LINKS = -lpthread
+LINKS = -pthread
 TARGET = main
 
 all: $(TARGET)

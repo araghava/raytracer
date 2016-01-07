@@ -1,5 +1,4 @@
 #include "raytracer.h"
-#include <pthread.h>
 #include <thread>
 #include <stdlib.h>
 #include <unistd.h>
@@ -27,8 +26,7 @@ Color Raytracer::tracePrimaryRay(const Vector &origin,
   return world.traceRay(ray);
 }
 
-void *raytrace_threading_fn(void *parms) {
-  RaytraceThreadParms *p = static_cast<RaytraceThreadParms *>(parms);
+void raytrace_threading_fn(RaytraceThreadParms *p) {
   int pxWidth = p->parms->width * p->parms->antialias;
   int pxHeight = p->parms->height * p->parms->antialias;
   int pxSmaller = std::min(pxWidth, pxHeight);
@@ -56,22 +54,24 @@ void *raytrace_threading_fn(void *parms) {
       avg /= (1.0 * p->parms->antialias * p->parms->antialias);
       p->buffer[i][j] = avg;
     }
+
+    p->progressReporter->report();
   }
 
-  // Free thread structure memory.
   delete p;
-  pthread_exit(0);
 }
 
 bool Raytracer::render(const std::string &outpath) {
+  printf("Rendering...\n");
+  ProgressReporter progressReporter(renderParms.width);
+
   int num_threads = std::thread::hardware_concurrency();
   num_threads = std::max(num_threads, 1);
-
   Screen screen(renderParms.width, renderParms.height);
 
   // Split up the work to be done based on how many threads are available.
   int chunkSize = renderParms.width / num_threads;
-  pthread_t *threads = new pthread_t[num_threads];
+  std::thread threads[num_threads];
 
   // Hold a color buffer here so that we don't have thread competition for
   // screen.setPixel.
@@ -80,14 +80,10 @@ bool Raytracer::render(const std::string &outpath) {
   for (int i = 0; i < renderParms.width; i++)
     buffer[i] = new Color[renderParms.height];
 
-  int start = 0, end;
   for (int i = 0; i < num_threads; i++) {
-    end = start + chunkSize;
-    if (i == num_threads - 1)
-      end = renderParms.width - 1;
+    const int start = i * chunkSize;
+    const int end = std::min(renderParms.width - 1, start + chunkSize - 1);
 
-    // Create the threading structure. This memory is freed inside the
-    // thread using it.
     RaytraceThreadParms *parms = new RaytraceThreadParms();
     parms->raytracer = this;
     parms->parms = &renderParms;
@@ -95,15 +91,17 @@ bool Raytracer::render(const std::string &outpath) {
     parms->end_row = end;
     parms->buffer = buffer;
     parms->screen = &screen;
+    parms->progressReporter = &progressReporter;
 
-    pthread_create(&threads[i], NULL, raytrace_threading_fn, (void *)parms);
-    start = end + 1;
+    threads[i] = std::thread(raytrace_threading_fn, parms);
   }
 
   // Wait until all the pixel values have been computed.
-  for (int i = 0; i < num_threads; i++)
-    pthread_join(threads[i], NULL);
-  delete[] threads;
+  for (int i = 0; i < num_threads; i++) {
+    threads[i].join();
+  }
+
+  progressReporter.finalize();
 
   for (int i = 0; i < renderParms.width; i++)
     for (int j = 0; j < renderParms.height; j++)

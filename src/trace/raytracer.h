@@ -1,9 +1,10 @@
 #ifndef __RAY_TRACER_H
 #define __RAY_TRACER_H
 
-#include <vector>
 #include <string>
+#include <vector>
 
+#include "../core/progress.h"
 #include "../objects/object.h"
 #include "world.h"
 #include "screen.h"
@@ -23,7 +24,9 @@ struct RenderParms {
 struct RaytraceThreadParms {
   Raytracer *raytracer;
   Screen *screen;
+
   const RenderParms *parms;
+  ProgressReporter *progressReporter;
 
   int start_row;
   int end_row;

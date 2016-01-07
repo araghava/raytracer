@@ -1,10 +1,9 @@
 #ifndef __PARSER_H
 #define __PARSER_H
 
+#include "raytracer.h"
 #include <string>
 #include <istream>
-
-#include "raytracer.h"
 
 class Parser {
 public:

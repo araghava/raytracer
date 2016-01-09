@@ -30,6 +30,16 @@ public:
     return *this;
   }
 
+  Color& operator *= (const Color& other) {
+    r *= other.r;
+    g *= other.g;
+    b *= other.b;
+    return *this;
+  }
+  Color operator*(Color other) const {
+    return Color(other.r * r, other.g * g, other.b * b);
+  }
+
   Color operator*(float scale) const {
     return Color(scale * r, scale * g, scale * b);
   }

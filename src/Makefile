@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -O3 -Wall -std=c++11
+CFLAGS = -std=c++11 -Wall
 LINKS = -pthread
 TARGET = main
 
@@ -31,8 +31,8 @@ trace/world.o: trace/world.cpp trace/world.h
 	$(CC) $(CFLAGS) -c trace/world.cpp -o trace/world.o
 trace/parser.o: trace/parser.cpp trace/parser.h
 	$(CC) $(CFLAGS) -c trace/parser.cpp -o trace/parser.o
-objects/object.o: objects/object.cpp objects/object.h
-	$(CC) $(CFLAGS) -c objects/object.cpp -o objects/object.o
+objects/sphere.o: objects/sphere.cpp objects/sphere.h
+	$(CC) $(CFLAGS) -c objects/sphere.cpp -o objects/sphere.o
 
 clean:
 	rm -f raytrace *.o core/*.o trace/*.o objects/*.o

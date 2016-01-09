@@ -5,7 +5,7 @@
 #include "vector3.h"
 
 // Returns a random float in the range [min, max].
-extern float UTILrandomFloatBetween(float min, float max);
+extern float UTILrandomFloatBetween(const float min, const float max);
 
 // Reflects an incident vector across a given surface normal.
 // Returns a normalized vector.

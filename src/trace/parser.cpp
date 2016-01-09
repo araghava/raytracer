@@ -6,19 +6,22 @@
 #include "../objects/sphere.h"
 #include "../objects/plane.h"
 
-#define MAX_PARSER_LINE_COUNT 100000000
+#define MAX_PARSER_LINE_COUNT 10000000
 
-bool Parser::createWorld(Raytracer *tracer, std::string &err, std::istream &is)
+Parser::Parser() {
+  // TODO: std::make_shared
+  textureMap["null"] = std::shared_ptr<Texture>(new NoopTexture("null"));
+}
 
-{
+bool Parser::createWorld(Raytracer *tracer, std::string &err, std::istream &is) {
   int count = 0;
+
   while (1) {
     std::string tag;
     is >> tag;
-
-    if (tag == "lock")
+    if (tag == "lock") {
       return true;
-    else if (tag == "parameters") {
+    } else if (tag == "parameters") {
       int pc;
       is >> pc;
       parseParameters(tracer, pc, is);
@@ -30,6 +33,10 @@ bool Parser::createWorld(Raytracer *tracer, std::string &err, std::istream &is)
       int lc;
       is >> lc;
       parseLights(tracer, lc, is);
+    } else if (tag == "textures") {
+      int tc;
+      is >> tc;
+      parseTextures(tracer, tc, is);
     }
 
     if (count == MAX_PARSER_LINE_COUNT) {
@@ -38,6 +45,22 @@ bool Parser::createWorld(Raytracer *tracer, std::string &err, std::istream &is)
     }
     count++;
   }
+}
+
+bool Parser::parseTextures(Raytracer *tracer, int tc, std::istream &is) {
+  for (int i = 0; i < tc; i++) {
+    std::string name, tag;
+    is >> name >> tag;
+    if (tag == "solid") {
+      double r, g, b;
+      is >> r >> g >> b;
+
+      // TODO: upgrade compiler and use make_shared
+      textureMap[name] = std::shared_ptr<SolidTexture>(new SolidTexture(name, Color(r, g, b)));
+    }
+  }
+
+  return true;
 }
 
 bool Parser::parseParameters(Raytracer *tracer, int pc, std::istream &is) {
@@ -66,13 +89,19 @@ bool Parser::parseObjects(Raytracer *tracer, int oc, std::istream &is) {
   for (int i = 0; i < oc; i++) {
     std::string otype;
     is >> otype;
+
+    Object *o;
+    std::string tex;
+    is >> tex;
+    is >> tex;
+
     if (otype == "sphere") {
       std::string tmp;
       is >> tmp;
       float x, y, z, rad;
       is >> x >> y >> z;
       is >> tmp >> rad;
-      tracer->addObject(new Sphere(Vector(x, y, z), rad));
+      o = new Sphere(Vector(x, y, z), rad);
     } else if (otype == "plane") {
       float x1, y1, z1, x2, y2, z2, x3, y3, z3;
       Vector v1, v2, v3;
@@ -89,9 +118,11 @@ bool Parser::parseObjects(Raytracer *tracer, int oc, std::istream &is) {
       is >> s;
       is >> x3 >> y3 >> z3;
       v3 = Vector(x3, y3, z3);
-
-      tracer->addObject(new Plane(v1, v2, v3));
+      o = new Plane(v1, v2, v3);
     }
+
+    o->setTexture(textureMap[tex]);
+    tracer->addObject(o);
   }
   return true;
 }

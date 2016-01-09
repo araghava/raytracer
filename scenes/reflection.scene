@@ -1,21 +1,40 @@
 parameters 2
-    resolution 512 512
-    antialias 2
-lights 1
-    spherelight
-        position -1.5 0.5 -2
-        color 1 1 1
-        intensity 0.6
-        radius 0.2
-objects 3
-    sphere
-        position -1 0 -4
-        radius .5
-    sphere
-        position 0 0 -3
-        radius .5
-    plane
-        v1 0 -0.5 -5
-        v2 -1 -0.5 1
-        v3 1 -0.5 1
+  resolution 1024 1024
+  antialias 4
+lights 2
+  spherelight
+    position -1.5 0.5 -2
+    color 1 1 1
+    intensity 0.6
+    radius 0.2
+  spherelight
+    position 1.5 0.5 -2
+    color 1 1 1
+    intensity 0.6
+    radius 0.2
+textures 3
+  green_color
+    solid 0 0.75 0
+  red_color
+    solid 0.75 0 0
+  blue_color
+    solid 0 0 0.75
+objects 4
+  sphere
+    texture green_color
+    position -1 0 -4
+    radius .5
+  sphere
+    texture red_color
+    position 0 0 -3
+    radius .5
+  sphere
+    texture blue_color
+    position 1 0 -4
+    radius .5
+  plane
+    texture null
+    v1 0 -0.5 -5
+    v2 -1 -0.5 1
+    v3 1 -0.5 1
 lock

@@ -1,6 +1,9 @@
 #ifndef __OBJECT_H
 #define __OBJECT_H
 
+#include <memory>
+
+#include "texture.h"
 #include "../core/vector3.h"
 #include "../core/color.h"
 #include "../trace/ray.h"
@@ -11,18 +14,32 @@ class Ray;
 // Abstract Object.
 class Object {
 public:
-  Object(const Vector &c) { setCenter(c); }
+  Object(const Vector &c) : center(c), texture(0) {}
   virtual ~Object() {}
 
-  Vector &getCenter() { return center; }
-  void setCenter(const Vector &v) { center = v; }
+  const Vector& getCenter() { return center; }
 
   // Methods to be overriden by subclasses.
   virtual bool intersect(const Ray &ray, Intersection &intersection) = 0;
   virtual bool contains(const Vector &point) = 0;
 
+  Color sampleTexture(const Vector &pt) {
+    // TODO: get UV coordinate from pt...
+    const double u = 0, v = 0;
+    if (texture) {
+      return texture->sample(u, v);
+    }
+
+    return Color(0,0,0);
+  }
+
+  void setTexture(std::shared_ptr<Texture> t) {
+    texture = t;
+  }
+
 private:
   Vector center;
+  std::shared_ptr<Texture> texture;
 };
 
 // Abstract Light.

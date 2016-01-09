@@ -44,8 +44,6 @@ Color World::traceRay(Ray &ray) {
 Color World::computeDiffuse(Light *light, const Intersection &intersect,
                             float spec_contrib, float &diff_contrib,
                             const Vector &sample_pos) {
-  Color c(0.0, 0.0, 0.0);
-
   Vector pos_off = (sample_pos - intersect.pt).normalize();
 
   // The amount this light contributes is proportional to the dot
@@ -55,9 +53,10 @@ Color World::computeDiffuse(Light *light, const Intersection &intersect,
   // HACK: When there's specular, ignore the diffuse.
   diff_contrib *= (1 - spec_contrib);
 
-  if (diff_contrib >= 0.0)
-    c = light->color * (light->intensity * diff_contrib);
-  return c;
+  if (diff_contrib >= 0.0) {
+    return light->color * light->intensity * diff_contrib;
+  }
+  return Color(0, 0, 0);
 }
 
 Color World::computeSpecular(Light *light, const Intersection &intersect,
@@ -142,7 +141,7 @@ Color World::computeLighting(const Intersection &intersect) {
 
     cur_diff /= (1.0 * samples);
     cur_spec /= (1.0 * samples);
-    diffuse += cur_diff;
+    diffuse += cur_diff * intersect.object->sampleTexture(intersect.pt);
     specular += cur_spec;
   }
 

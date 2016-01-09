@@ -25,7 +25,7 @@ public:
 class Intersection {
 public:
   Ray ray;
-  Object *object;
+  Object *object = 0;
   Vector pt, nml;
 };
 

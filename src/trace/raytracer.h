@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 #include "../core/progress.h"
 #include "../objects/object.h"

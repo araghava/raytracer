@@ -9,10 +9,10 @@
 // Texture applicable to objects
 class Texture {
 public:
-  Texture(const std::string s) : id(s) {}
-  ~Texture() {}
+  Texture(const std::string& s) : id(s) {}
+  virtual ~Texture() = default;
 
-  virtual Color sample(const double i, const double j) = 0;
+  virtual Color sample(const double i, const double j) const = 0;
 
   std::string getId() const {
     return id;
@@ -28,7 +28,7 @@ public:
   SolidTexture(const std::string id, const Color c)
     : Texture(id), color(c) {}
 
-  virtual Color sample(const double i, const double j) {
+  virtual Color sample(const double i, const double j) const {
     return color;
   }
 

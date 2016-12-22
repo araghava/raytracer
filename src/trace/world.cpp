@@ -1,18 +1,12 @@
 #include "world.h"
+
 #include <cstdlib>
 #include <cfloat>
 #include <math.h>
 
-World::World() {}
+#include "../core/constants.h"
 
-World::~World() {
-  for (int i = 0; i < (int)objectList.size(); i++)
-    delete objectList[i];
-  for (int i = 0; i < (int)lightList.size(); i++)
-    delete lightList[i];
-}
-
-bool World::getClosestIntersection(Ray &ray, Intersection &intersect) {
+bool World::getClosestIntersection(const Ray& ray, Intersection& intersect) {
   float min_dist = FLT_MAX;
   bool found = false;
 
@@ -34,16 +28,18 @@ bool World::getClosestIntersection(Ray &ray, Intersection &intersect) {
   return found;
 }
 
-Color World::traceRay(Ray &ray) {
+Color World::traceRay(const Ray& ray) {
   Intersection inter;
-  if (getClosestIntersection(ray, inter))
+  if (getClosestIntersection(ray, inter) && inter.finalized) {
     return computeLighting(inter);
+  }
   return Color(0, 0, 0);
 }
 
-Color World::computeDiffuse(Light *light, const Intersection &intersect,
-                            float spec_contrib, float &diff_contrib,
-                            const Vector &sample_pos) {
+Color World::computeDiffuse(const std::shared_ptr<Light>& light,
+                            const Intersection& intersect,
+                            float spec_contrib, float& diff_contrib,
+                            const Vector& sample_pos) {
   Vector pos_off = (sample_pos - intersect.pt).normalize();
 
   // The amount this light contributes is proportional to the dot
@@ -59,8 +55,9 @@ Color World::computeDiffuse(Light *light, const Intersection &intersect,
   return Color(0, 0, 0);
 }
 
-Color World::computeSpecular(Light *light, const Intersection &intersect,
-                             float &spec_contrib, const Vector &sample_pos) {
+Color World::computeSpecular(const std::shared_ptr<Light>& light,
+                             const Intersection& intersect,
+                             float& spec_contrib, const Vector& sample_pos) {
   Color c(0.0, 0.0, 0.0);
 
   Vector ray_dir = (intersect.ray.origin - intersect.pt).normalize();
@@ -86,8 +83,8 @@ Color World::computeSpecular(Light *light, const Intersection &intersect,
   return c;
 }
 
-bool World::castShadowRay(const Vector &position,
-                          const Intersection &intersect) {
+bool World::castShadowRay(const Vector& position,
+                          const Intersection& intersect) {
   Ray shadow_ray(intersect.pt, (position - intersect.pt).normalize(), -1);
   Intersection inter;
   float lightdist2 = (position - intersect.pt).length2();
@@ -101,7 +98,7 @@ bool World::castShadowRay(const Vector &position,
   return false;
 }
 
-Color World::computeRefractiveReflective(const Intersection &intersect) {
+Color World::computeRefractiveReflective(const Intersection& intersect) {
   if (intersect.ray.remaining_casts <= 0)
     return Color(0, 0, 0);
 
@@ -109,10 +106,10 @@ Color World::computeRefractiveReflective(const Intersection &intersect) {
   Ray r(intersect.pt, UTILreflectVector(incident, intersect.nml),
         intersect.ray.remaining_casts - 1);
 
-  return traceRay(r) * 0.3;
+  return traceRay(r) * RAY_CAST_ATTENUATION;
 }
 
-Color World::computeLighting(const Intersection &intersect) {
+Color World::computeLighting(const Intersection& intersect) {
   Color diffuse(0.0, 0.0, 0.0);
   Color specular(0.0, 0.0, 0.0);
 

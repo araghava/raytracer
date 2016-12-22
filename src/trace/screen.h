@@ -14,10 +14,14 @@ public:
   ~Screen();
 
   // Writes out the buffer to disk, as a TGA file.
-  bool writeImage(const char *file);
+  bool writeImage(const std::string& file);
 
-  int getWidth() { return width; }
-  int getHeight() { return height; }
+  int getWidth() const {
+    return width;
+  }
+  int getHeight() const {
+    return height;
+  }
 
   void setPixel(int x, int y, const Color &color) {
     if (x < 0 || y < 0 || x >= width || y >= height) {
@@ -40,14 +44,17 @@ private:
 
 class Camera {
 public:
-  Camera(Vector &p, Vector &u, Vector &l) : pos(p), up(u), lookAt(l) { init(); }
+  Camera(const Vector& p, const Vector& u, const Vector& l)
+    : pos(p), up(u), lookAt(l) {
+    init();
+  }
   Camera() {
     pos = Vector(0, 0, 10);
     up = Vector(0, 1, 0);
     lookAt = Vector(0, 0, 0);
     init();
   }
-  ~Camera() {}
+  ~Camera() = default;
 
   Vector u, v, w;
   Vector pos, up, lookAt;

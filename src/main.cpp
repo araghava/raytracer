@@ -9,17 +9,18 @@
 #include "trace/raytracer.h"
 #include "trace/parser.h"
 
-static const char *DEFAULT_IMAGE_OUT = "../images/out.tga";
+namespace {
+  const std::string DEFAULT_IMAGE_OUT = "../images/out.tga";
+  const std::string DEFAULT_SCENE = "../scenes/reflection.scene";
+}
 
 void usage() {
-  printf("\nRaytracer\n");
-  printf("    Reads scene from a file, sample scenes are in ../scenes/\n");
-  printf("    Parameters:\n");
-  printf("        -o    output file, defaults to ../images/out.tga\n");
-  printf("        -s    scene file. if not provided it reads from standard "
-         "input\n");
-
-  printf("\n");
+  std::cout << "\nRaytracer\n";
+  std::cout << "    Reads scene from a file, sample scenes are in ../scenes/\n";
+  std::cout << "    Parameters:\n";
+  std::cout << "        -o    output file, defaults to ../images/out.tga\n";
+  std::cout << "        -s    scene file. if not provided it reads from standard input\n";
+  std::cout << std::endl;
 }
 
 int main(int argc, char **argv) {
@@ -28,18 +29,18 @@ int main(int argc, char **argv) {
     return 0;
   }
 
-  char *scene_file = 0;
-  char *out_file = 0;
+  std::string scene_file;
+  std::string out_file;
   int c;
 
   std::ifstream scene;
   while ((c = getopt(argc, argv, "o:s:")) != -1) {
     switch (c) {
     case 'o':
-      out_file = optarg;
+      out_file = std::string(optarg);
       break;
     case 's':
-      scene_file = optarg;
+      scene_file = std::string(optarg);
       break;
     default:
       abort();
@@ -50,9 +51,10 @@ int main(int argc, char **argv) {
   Parser parser;
   std::string err, out;
 
-  if (scene_file) {
+  std::cout << "time to parse" << std::endl;
+  if (!scene_file.empty()) {
     std::ifstream scene;
-    scene.open(scene_file, std::ifstream::in);
+    scene.open(scene_file.c_str(), std::ifstream::in);
 
     if (!parser.createWorld(&tracer, err, scene)) {
       std::cout << err << "\n";
@@ -67,10 +69,11 @@ int main(int argc, char **argv) {
   }
 
   out = DEFAULT_IMAGE_OUT;
-  if (out_file)
+  if (out_file.empty()) {
     out = out_file;
+  }
 
   scene.close();
-  tracer.render(out);
+  tracer.render(out.c_str());
   return 0;
 }

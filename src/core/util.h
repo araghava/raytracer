@@ -9,6 +9,6 @@ extern float UTILrandomFloatBetween(const float min, const float max);
 
 // Reflects an incident vector across a given surface normal.
 // Returns a normalized vector.
-extern Vector UTILreflectVector(const Vector &incident, const Vector &nml);
+extern Vector UTILreflectVector(const Vector& incident, const Vector& nml);
 
 #endif

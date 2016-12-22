@@ -14,12 +14,12 @@ class Plane : public Object {
 public:
   // Defines a plane by three points.
   // Make sure that no two are collinear!
-  Plane(const Vector &p1_, const Vector &p2_, const Vector &p3_)
+  Plane(const Vector& p1_, const Vector& p2_, const Vector& p3_)
       : Object(Vector(0, 0, 0)), p1(p1_), p2(p2_), p3(p3_) {}
   virtual ~Plane() {}
 
   // Virtual implementations.
-  virtual bool intersect(const Ray &ray, Intersection &intersection) {
+  virtual bool intersect(const Ray& ray, Intersection& intersection) {
     Vector nml = ((p2 - p1).cross(p3 - p2)).normalize();
     if (ray.direction.dot(nml) > 0)
       nml = nml * -1;
@@ -47,10 +47,11 @@ public:
     intersection.ray = ray;
     intersection.pt = ray.origin + ray.direction * u;
     intersection.nml = nml;
+    intersection.finalized = true;
     return true;
   }
 
-  virtual bool contains(const Vector &point) {
+  virtual bool contains(const Vector& point) {
     const Vector nml = ((p2 - p1).cross(p3 - p2)).normalize();
     return fabs((point - p1).dot(nml)) < TOLERANCE;
   }

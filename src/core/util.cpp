@@ -7,7 +7,7 @@ float UTILrandomFloatBetween(float min, float max) {
   return (r * (max - min)) + min;
 }
 
-Vector UTILreflectVector(const Vector &incident, const Vector &nml) {
+Vector UTILreflectVector(const Vector& incident, const Vector& nml) {
   const float perp = 2.0 * incident.dot(nml);
   return (incident - (nml * perp)).normalize();
 }

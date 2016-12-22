@@ -7,14 +7,12 @@
 
 #include "../core/util.h"
 
-Sphere::~Sphere() {}
-
-bool Sphere::contains(const Vector &point) {
+bool Sphere::contains(const Vector& point) {
   const float r = radius + 1e-6;
   return (point - getCenter()).length2() <= r * r;
 }
 
-bool Sphere::intersect(const Ray &ray, Intersection &intersection) {
+bool Sphere::intersect(const Ray& ray, Intersection& intersection) {
   const Vector origin = ray.origin;
   Vector direction = ray.direction;
   direction.normalize();
@@ -56,12 +54,13 @@ bool Sphere::intersect(const Ray &ray, Intersection &intersection) {
   intersection.pt = pt;
   intersection.nml = nml;
   intersection.ray = ray;
+  intersection.finalized = true;
   return true;
 }
 
 int SphereLight::getNumSamples() const { return 8 * 8; }
 
-void SphereLight::sample(Vector &pos) const {
+void SphereLight::sample(Vector& pos) const {
 
   Vector random_unit_vector;
 

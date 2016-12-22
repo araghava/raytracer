@@ -2,6 +2,7 @@
 #include <thread>
 #include <stdlib.h>
 #include <unistd.h>
+#include <iostream>
 
 #include "../core/vector3.h"
 #include "../core/color.h"
@@ -12,21 +13,23 @@ Raytracer::Raytracer() {
   setParms(p);
 }
 
-Raytracer::~Raytracer() {}
+void Raytracer::addObject(std::shared_ptr<Object>& obj) {
+  world.addObject(obj);
+}
 
-void Raytracer::addObject(Object *obj) { world.addObject(obj); }
+void Raytracer::addLight(std::shared_ptr<Light>& light) {
+  world.addLight(light);
+}
 
-void Raytracer::addLight(Light *light) { world.addLight(light); }
-
-Color Raytracer::tracePrimaryRay(const Vector &origin,
-                                 const Vector &direction) {
+Color Raytracer::tracePrimaryRay(const Vector& origin,
+                                 const Vector& direction) {
   Intersection intersection;
   Ray ray(origin, direction, RAY_RECURSION_LIMIT);
 
   return world.traceRay(ray);
 }
 
-void raytrace_threading_fn(RaytraceThreadParms *p) {
+void raytrace_threading_fn(RaytraceThreadParms* p) {
   int pxWidth = p->parms->width * p->parms->antialias;
   int pxHeight = p->parms->height * p->parms->antialias;
   int pxSmaller = std::min(pxWidth, pxHeight);
@@ -61,11 +64,11 @@ void raytrace_threading_fn(RaytraceThreadParms *p) {
   delete p;
 }
 
-bool Raytracer::render(const std::string &outpath) {
-  printf("Rendering...\n");
+bool Raytracer::render(const std::string& outpath) {
+  std::cout << "Rendering..." << std::endl;
   ProgressReporter progressReporter(renderParms.width);
 
-  int num_threads = std::thread::hardware_concurrency();
+  int num_threads = 1;//std::thread::hardware_concurrency();
   num_threads = std::max(num_threads, 1);
   Screen screen(renderParms.width, renderParms.height);
 

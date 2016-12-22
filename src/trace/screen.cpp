@@ -14,8 +14,8 @@ Screen::~Screen() {
   data = 0;
 }
 
-bool Screen::writeImage(const char *file) {
-  std::ofstream o(file, std::ios::out | std::ios::binary);
+bool Screen::writeImage(const std::string& file) {
+  std::ofstream o(file.c_str(), std::ios::out | std::ios::binary);
 
   // Write the header.
   o.put(0);

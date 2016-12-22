@@ -23,42 +23,39 @@ struct RenderParms {
 
 // Threading structure for raytracing.
 struct RaytraceThreadParms {
-  Raytracer *raytracer;
-  Screen *screen;
+  Raytracer* raytracer;
+  Screen* screen;
 
-  const RenderParms *parms;
-  ProgressReporter *progressReporter;
+  const RenderParms* parms;
+  ProgressReporter* progressReporter;
 
   int start_row;
   int end_row;
 
-  Color **buffer;
+  Color** buffer;
 };
 
 class Raytracer {
 public:
   Raytracer();
-  ~Raytracer();
+  ~Raytracer() = default;
 
-  // Caller must allocate memory for the object, this class will
-  // then take ownership.
-  void addObject(Object *object);
+  void addObject(std::shared_ptr<Object>& obj);
+  void addLight(std::shared_ptr<Light>& light);
+  void setParms(RenderParms parms) {
+    renderParms = parms;
+  }
 
-  // Caller must allocate memory for the object, this class will
-  // then take ownership.
-  void addLight(Light *light);
-  void setParms(RenderParms parms) { renderParms = parms; }
-
-  bool render(const std::string &out_path);
+  bool render(const std::string& out_path);
 
   // Fires primary rays. These are rays that originate at the camera.
-  Color tracePrimaryRay(const Vector &origin, const Vector &direction);
+  Color tracePrimaryRay(const Vector& origin, const Vector& direction);
 
 private:
   RenderParms renderParms;
 
-  std::vector<Object *> objectList;
-  std::vector<Light *> lightList;
+  std::vector<std::shared_ptr<Object>> objectList;
+  std::vector<std::shared_ptr<Light>> lightList;
 
   World world;
 };

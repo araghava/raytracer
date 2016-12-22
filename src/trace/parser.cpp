@@ -1,5 +1,7 @@
 #include "parser.h"
 
+#include <iostream>
+
 #include "../core/vector3.h"
 #include "../core/color.h"
 #include "../objects/object.h"
@@ -9,32 +11,27 @@
 #define MAX_PARSER_LINE_COUNT 10000000
 
 Parser::Parser() {
-  // TODO: std::make_shared
-  textureMap["null"] = std::shared_ptr<Texture>(new NoopTexture("null"));
+  textureMap["null"] = std::make_shared<NoopTexture>("null");
 }
 
-bool Parser::createWorld(Raytracer *tracer, std::string &err, std::istream &is) {
+bool Parser::createWorld(Raytracer* const tracer, std::string &err, std::istream &is) {
   int count = 0;
 
   while (1) {
-    std::string tag;
-    is >> tag;
+    int pc, oc, lc, tc;
+    std::string tag; is >> tag;
     if (tag == "lock") {
       return true;
     } else if (tag == "parameters") {
-      int pc;
       is >> pc;
       parseParameters(tracer, pc, is);
     } else if (tag == "objects") {
-      int oc;
       is >> oc;
       parseObjects(tracer, oc, is);
     } else if (tag == "lights") {
-      int lc;
       is >> lc;
       parseLights(tracer, lc, is);
     } else if (tag == "textures") {
-      int tc;
       is >> tc;
       parseTextures(tracer, tc, is);
     }
@@ -47,35 +44,31 @@ bool Parser::createWorld(Raytracer *tracer, std::string &err, std::istream &is) 
   }
 }
 
-bool Parser::parseTextures(Raytracer *tracer, int tc, std::istream &is) {
+bool Parser::parseTextures(Raytracer* const tracer, const int tc, std::istream &is) {
+  std::string name, tag;
+  double r, g, b;
   for (int i = 0; i < tc; i++) {
-    std::string name, tag;
     is >> name >> tag;
     if (tag == "solid") {
-      double r, g, b;
       is >> r >> g >> b;
-
-      // TODO: upgrade compiler and use make_shared
-      textureMap[name] = std::shared_ptr<SolidTexture>(new SolidTexture(name, Color(r, g, b)));
+      textureMap[name] = std::make_shared<SolidTexture>(name, Color(r, g, b));
     }
   }
-
   return true;
 }
 
-bool Parser::parseParameters(Raytracer *tracer, int pc, std::istream &is) {
+bool Parser::parseParameters(Raytracer* const tracer, const int pc, std::istream &is) {
   RenderParms parms;
+  std::string tag;
+  int as, rx, ry;
 
   for (int i = 0; i < pc; i++) {
-    std::string tag;
     is >> tag;
     if (tag == "resolution") {
-      int rx, ry;
       is >> rx >> ry;
       parms.width = rx;
       parms.height = ry;
     } else if (tag == "antialias") {
-      int as;
       is >> as;
       parms.antialias = as;
     }
@@ -85,25 +78,20 @@ bool Parser::parseParameters(Raytracer *tracer, int pc, std::istream &is) {
   return true;
 }
 
-bool Parser::parseObjects(Raytracer *tracer, int oc, std::istream &is) {
-  for (int i = 0; i < oc; i++) {
-    std::string otype;
-    is >> otype;
+bool Parser::parseObjects(Raytracer* const tracer, const int oc, std::istream &is) {
+  float x1, y1, z1, x2, y2, z2, x3, y3, z3;
+  float x, y, z, rad;
+  std::string tex, otype, tmp;
+  std::shared_ptr<Object> o;
 
-    Object *o;
-    std::string tex;
-    is >> tex;
-    is >> tex;
+  for (int i = 0; i < oc; i++) {
+    is >> otype >> tex >> tex;
 
     if (otype == "sphere") {
-      std::string tmp;
-      is >> tmp;
-      float x, y, z, rad;
-      is >> x >> y >> z;
+      is >> tmp >> x >> y >> z;
       is >> tmp >> rad;
-      o = new Sphere(Vector(x, y, z), rad);
+      o = std::make_shared<Sphere>(Vector(x, y, z), rad);
     } else if (otype == "plane") {
-      float x1, y1, z1, x2, y2, z2, x3, y3, z3;
       Vector v1, v2, v3;
       std::string s;
 
@@ -118,49 +106,37 @@ bool Parser::parseObjects(Raytracer *tracer, int oc, std::istream &is) {
       is >> s;
       is >> x3 >> y3 >> z3;
       v3 = Vector(x3, y3, z3);
-      o = new Plane(v1, v2, v3);
+      o = std::make_shared<Plane>(v1, v2, v3);
     }
 
     o->setTexture(textureMap[tex]);
     tracer->addObject(o);
   }
+
   return true;
 }
 
-bool Parser::parseLights(Raytracer *tracer, int lc, std::istream &is) {
+bool Parser::parseLights(Raytracer* const tracer, int lc, std::istream &is) {
+  float x, y, z, r, g, b, inten, rad;
+  std::string tmp, ltype;
+  std::shared_ptr<Light> l;
+
   for (int i = 0; i < lc; i++) {
-    std::string ltype;
     is >> ltype;
     if (ltype == "spherelight") {
-      std::string tmp;
-      is >> tmp;
-      float x, y, z;
-      is >> x >> y >> z;
-      is >> tmp;
-      float r, g, b;
-      is >> r >> g >> b;
-      is >> tmp;
-      float inten, rad;
-      is >> inten;
-      is >> tmp;
-      is >> rad;
-
-      tracer->addLight(
-          new SphereLight(Vector(x, y, z), Color(r, g, b), inten, rad));
+      is >> tmp >> x >> y >> z;
+      is >> tmp >> r >> g >> b;
+      is >> tmp >> inten;
+      is >> tmp >> rad;
+      l = std::make_shared<SphereLight>(Vector(x, y, z), Color(r, g, b), inten, rad);
     } else if (ltype == "pointlight") {
-      std::string tmp;
-      is >> tmp;
-      float x, y, z;
-      is >> x >> y >> z;
-      is >> tmp;
-      float r, g, b;
-      is >> r >> g >> b;
-      is >> tmp;
-      float inten;
-      is >> inten;
-
-      tracer->addLight(new PointLight(Vector(x, y, z), Color(r, g, b), inten));
+      is >> tmp >> x >> y >> z;
+      is >> tmp >> r >> g >> b;
+      is >> tmp >> inten;
+      l = std::make_shared<PointLight>(Vector(x, y, z), Color(r, g, b), inten);
     }
+    tracer->addLight(l);
   }
+
   return true;
 }

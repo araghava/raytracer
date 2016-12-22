@@ -6,8 +6,9 @@
 #include "../objects/object.h"
 
 class Object;
+
 class Ray {
-public:
+ public:
   Ray() : origin(Vector()), direction(Vector()), remaining_casts(-1) {}
   Ray(Vector o, Vector d, int r) : origin(o), direction(d), remaining_casts(r) {
     direction.normalize();
@@ -22,11 +23,14 @@ public:
   int remaining_casts;
 };
 
-class Intersection {
-public:
+struct Intersection {
+  Intersection(bool _f = false) : finalized(_f) {}
+
   Ray ray;
-  Object *object = 0;
   Vector pt, nml;
+  Object* object;
+
+  bool finalized = false;
 };
 
 #endif

@@ -10,6 +10,8 @@ extern const float RAY_INTERSECTION_BIAS;
 extern const float RAY_NEAR_DISTANCE;
 extern const float RAY_FAR_DISTANCE;
 
+extern const float RAY_CAST_ATTENUATION;
+
 extern const int RAY_RECURSION_LIMIT;
 
 #endif

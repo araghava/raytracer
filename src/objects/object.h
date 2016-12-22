@@ -14,16 +14,18 @@ class Ray;
 // Abstract Object.
 class Object {
 public:
-  Object(const Vector &c) : center(c), texture(0) {}
-  virtual ~Object() {}
+  Object(const Vector& c) : center(c), texture(0) {}
+  virtual ~Object() = default;
 
-  const Vector& getCenter() { return center; }
+  Vector getCenter() const {
+    return center;
+  }
 
   // Methods to be overriden by subclasses.
-  virtual bool intersect(const Ray &ray, Intersection &intersection) = 0;
-  virtual bool contains(const Vector &point) = 0;
+  virtual bool intersect(const Ray& ray, Intersection& intersection) = 0;
+  virtual bool contains(const Vector& point) = 0;
 
-  Color sampleTexture(const Vector &pt) {
+  Color sampleTexture(const Vector& pt) {
     // TODO: get UV coordinate from pt...
     const double u = 0, v = 0;
     if (texture) {
@@ -45,7 +47,7 @@ private:
 // Abstract Light.
 class Light {
 public:
-  Light(const Vector &p, Color c, float inten)
+  Light(const Vector& p, Color c, float inten)
       : position(p), color(c), intensity(inten) {}
   virtual ~Light() {}
 
@@ -56,7 +58,7 @@ public:
   // Uniform random sampling on the area of this light. Fills "point" with a
   // random
   // point on the surface of the light object.
-  virtual void sample(Vector &point) const = 0;
+  virtual void sample(Vector& point) const = 0;
 
   Vector position;
   Color color;
@@ -65,13 +67,13 @@ public:
 
 class PointLight : public Light {
 public:
-  PointLight(const Vector &p, Color c, float inten) : Light(p, c, inten) {}
-  virtual ~PointLight() {}
+  PointLight(const Vector& p, Color c, float inten) : Light(p, c, inten) {}
+  virtual ~PointLight() = default;
 
   // A point light isn't an area, so we can only take one sample.
   virtual int getNumSamples() const { return 1; }
 
-  virtual void sample(Vector &point) const { point = position; }
+  virtual void sample(Vector& point) const { point = position; }
 };
 
 #endif

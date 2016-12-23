@@ -1,5 +1,4 @@
 #include "raytracer.h"
-#include <thread>
 #include <stdlib.h>
 #include <unistd.h>
 #include <iostream>
@@ -8,7 +7,7 @@
 #include "../core/color.h"
 #include "../core/constants.h"
 
-Raytracer::Raytracer() {
+Raytracer::Raytracer(const int nt) : numThreads(nt) {
   RenderParms p;
   setParms(p);
 }
@@ -65,11 +64,9 @@ void raytrace_threading_fn(RaytraceThreadParms* p) {
 }
 
 bool Raytracer::render(const std::string& outpath) {
-  std::cout << "Rendering..." << std::endl;
   ProgressReporter progressReporter(renderParms.width);
 
-  int num_threads = 1;//std::thread::hardware_concurrency();
-  num_threads = std::max(num_threads, 1);
+  int num_threads = std::max(numThreads, 1);
   Screen screen(renderParms.width, renderParms.height);
 
   // Split up the work to be done based on how many threads are available.
@@ -86,7 +83,6 @@ bool Raytracer::render(const std::string& outpath) {
   for (int i = 0; i < num_threads; i++) {
     const int start = i * chunkSize;
     const int end = std::min(renderParms.width - 1, start + chunkSize - 1);
-
     RaytraceThreadParms *parms = new RaytraceThreadParms();
     parms->raytracer = this;
     parms->parms = &renderParms;

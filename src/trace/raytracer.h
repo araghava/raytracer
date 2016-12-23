@@ -2,6 +2,7 @@
 #define __RAY_TRACER_H
 
 #include <string>
+#include <thread>
 #include <vector>
 #include <unordered_map>
 
@@ -37,7 +38,7 @@ struct RaytraceThreadParms {
 
 class Raytracer {
 public:
-  Raytracer();
+  Raytracer(const int nt = std::thread::hardware_concurrency());
   ~Raytracer() = default;
 
   void addObject(std::shared_ptr<Object>& obj);
@@ -58,6 +59,8 @@ private:
   std::vector<std::shared_ptr<Light>> lightList;
 
   World world;
+
+  const int numThreads;
 };
 
 #endif

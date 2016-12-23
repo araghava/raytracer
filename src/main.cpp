@@ -31,10 +31,10 @@ int main(int argc, char **argv) {
 
   std::string scene_file;
   std::string out_file;
-  int c;
+  int c, threads = 0;
 
   std::ifstream scene;
-  while ((c = getopt(argc, argv, "o:s:")) != -1) {
+  while ((c = getopt(argc, argv, "o:s:t:")) != -1) {
     switch (c) {
     case 'o':
       out_file = std::string(optarg);
@@ -42,16 +42,18 @@ int main(int argc, char **argv) {
     case 's':
       scene_file = std::string(optarg);
       break;
+    case 't':
+      threads = std::atoi(optarg);
+      break;
     default:
       abort();
     }
   }
 
-  Raytracer tracer;
+  Raytracer tracer(threads <= 0 ? std::thread::hardware_concurrency() : threads);
   Parser parser;
   std::string err, out;
 
-  std::cout << "time to parse" << std::endl;
   if (!scene_file.empty()) {
     std::ifstream scene;
     scene.open(scene_file.c_str(), std::ifstream::in);

@@ -20,6 +20,7 @@ void usage() {
   std::cout << "    Parameters:\n";
   std::cout << "        -o    output file, defaults to ../images/out.tga\n";
   std::cout << "        -s    scene file. if not provided it reads from standard input\n";
+  std::cout << "        -t    threads. if not provided it uses thread::hardware_concurrency()\n";
   std::cout << std::endl;
 }
 

@@ -15,8 +15,8 @@ public:
   // Defines a plane by three points.
   // Make sure that no two are collinear!
   Plane(const Vector& p1_, const Vector& p2_, const Vector& p3_)
-      : Object(Vector(0, 0, 0)), p1(p1_), p2(p2_), p3(p3_) {}
-  virtual ~Plane() {}
+      : p1(p1_), p2(p2_), p3(p3_) {}
+  virtual ~Plane() = default;
 
   // Virtual implementations.
   virtual bool intersect(const Ray& ray, Intersection& intersection) {
@@ -51,7 +51,7 @@ public:
     return true;
   }
 
-  virtual bool contains(const Vector& point) {
+  virtual bool contains(const Vector& point) const {
     const Vector nml = ((p2 - p1).cross(p3 - p2)).normalize();
     return fabs((point - p1).dot(nml)) < TOLERANCE;
   }

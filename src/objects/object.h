@@ -14,18 +14,14 @@ class Ray;
 // Abstract Object.
 class Object {
 public:
-  Object(const Vector& c) : center(c), texture(0) {}
+  Object() : texture(0) {}
   virtual ~Object() = default;
-
-  Vector getCenter() const {
-    return center;
-  }
 
   // Methods to be overriden by subclasses.
   virtual bool intersect(const Ray& ray, Intersection& intersection) = 0;
-  virtual bool contains(const Vector& point) = 0;
+  virtual bool contains(const Vector& point) const = 0;
 
-  Color sampleTexture(const Vector& pt) {
+  virtual Color sampleTexture(const Vector& pt) const {
     // TODO: get UV coordinate from pt...
     const double u = 0, v = 0;
     if (texture) {
@@ -37,6 +33,14 @@ public:
 
   void setTexture(std::shared_ptr<Texture> t) {
     texture = t;
+  }
+
+  Vector getCenter() const {
+    return center;
+  }
+
+  void setCenter(const Vector& pt) {
+    center = pt;
   }
 
 private:

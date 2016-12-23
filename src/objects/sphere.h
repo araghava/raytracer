@@ -8,14 +8,18 @@
 // Sphere object implementation.
 class Sphere : public Object {
 public:
-  Sphere(const Vector c_, const float rad) : Object(c_), radius(rad) {}
+  Sphere(const Vector c_, const float rad) : radius(rad) {
+    setCenter(c_);
+  }
   virtual ~Sphere() = default;
 
-  float getRadius() { return radius; }
+  float getRadius() const {
+    return radius;
+  }
 
   // Virtual implementations.
   virtual bool intersect(const Ray& ray, Intersection& intersection);
-  virtual bool contains(const Vector& point);
+  virtual bool contains(const Vector& point) const;
 
 private:
   float radius;

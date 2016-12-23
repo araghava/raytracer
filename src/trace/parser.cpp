@@ -5,6 +5,7 @@
 #include "../core/vector3.h"
 #include "../core/color.h"
 #include "../objects/object.h"
+#include "../objects/objobject.h"
 #include "../objects/sphere.h"
 #include "../objects/plane.h"
 
@@ -85,31 +86,36 @@ bool Parser::parseObjects(Raytracer* const tracer, const int oc, std::istream &i
   std::shared_ptr<Object> o;
 
   for (int i = 0; i < oc; i++) {
-    is >> otype >> tex >> tex;
-
-    if (otype == "sphere") {
+    is >> otype;
+    if (otype == "obj") {
+      std::string filename; is >> tmp >> filename;
       is >> tmp >> x >> y >> z;
-      is >> tmp >> rad;
-      o = std::make_shared<Sphere>(Vector(x, y, z), rad);
-    } else if (otype == "plane") {
-      Vector v1, v2, v3;
-      std::string s;
+      o = std::make_shared<ObjObject>(Vector(x, y, z), filename);
+    } else {
+      is >> tex >> tex;
+      if (otype == "sphere") {
+        is >> tmp >> x >> y >> z;
+        is >> tmp >> rad;
+        o = std::make_shared<Sphere>(Vector(x, y, z), rad);
+      } else if (otype == "plane") {
+        Vector v1, v2, v3;
+        std::string s;
 
-      is >> s;
-      is >> x1 >> y1 >> z1;
-      v1 = Vector(x1, y1, z1);
+        is >> s;
+        is >> x1 >> y1 >> z1;
+        v1 = Vector(x1, y1, z1);
 
-      is >> s;
-      is >> x2 >> y2 >> z2;
-      v2 = Vector(x2, y2, z2);
+        is >> s;
+        is >> x2 >> y2 >> z2;
+        v2 = Vector(x2, y2, z2);
 
-      is >> s;
-      is >> x3 >> y3 >> z3;
-      v3 = Vector(x3, y3, z3);
-      o = std::make_shared<Plane>(v1, v2, v3);
+        is >> s;
+        is >> x3 >> y3 >> z3;
+        v3 = Vector(x3, y3, z3);
+        o = std::make_shared<Plane>(v1, v2, v3);
+      }
+      o->setTexture(textureMap[tex]);
     }
-
-    o->setTexture(textureMap[tex]);
     tracer->addObject(o);
   }
 

@@ -8,6 +8,7 @@ all: $(TARGET)
 DEPS = core/vector3.o \
     core/constants.o \
     core/util.o \
+	objects/objobject.o \
 	objects/sphere.o \
 	trace/screen.o \
 	trace/world.o \
@@ -31,6 +32,8 @@ trace/world.o: trace/world.cpp trace/world.h
 	$(CC) $(CFLAGS) -c trace/world.cpp -o trace/world.o
 trace/parser.o: trace/parser.cpp trace/parser.h
 	$(CC) $(CFLAGS) -c trace/parser.cpp -o trace/parser.o
+objects/objobject.o: objects/objobject.cpp objects/objobject.h
+	$(CC) $(CFLAGS) -c objects/objobject.cpp -o objects/objobject.o
 objects/sphere.o: objects/sphere.cpp objects/sphere.h
 	$(CC) $(CFLAGS) -c objects/sphere.cpp -o objects/sphere.o
 

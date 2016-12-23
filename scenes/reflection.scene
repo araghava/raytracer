@@ -19,7 +19,10 @@ textures 3
     solid 0.75 0 0
   blue_color
     solid 0 0 0.75
-objects 4
+objects 5
+  obj
+    filename ../models/cube.obj
+    position 0 0 -10
   sphere
     texture green_color
     position -1 0 -4

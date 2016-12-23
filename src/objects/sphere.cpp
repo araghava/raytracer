@@ -7,7 +7,7 @@
 
 #include "../core/util.h"
 
-bool Sphere::contains(const Vector& point) {
+bool Sphere::contains(const Vector& point) const {
   const float r = radius + 1e-6;
   return (point - getCenter()).length2() <= r * r;
 }

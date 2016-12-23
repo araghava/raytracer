@@ -28,7 +28,7 @@ public:
       return texture->sample(u, v);
     }
 
-    return Color(0,0,0);
+    return Color(1, 1, 1);
   }
 
   void setTexture(std::shared_ptr<Texture> t) {
@@ -43,7 +43,7 @@ public:
     center = pt;
   }
 
-private:
+protected:
   Vector center;
   std::shared_ptr<Texture> texture;
 };

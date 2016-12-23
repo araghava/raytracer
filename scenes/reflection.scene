@@ -1,6 +1,6 @@
 parameters 2
   resolution 128 128
-  antialias 4
+  antialias 2
 lights 2
   spherelight
     position -1.5 0.5 -2
@@ -19,10 +19,7 @@ textures 3
     solid 0.75 0 0
   blue_color
     solid 0 0 0.75
-objects 5
-  obj
-    filename ../models/cube.obj
-    position 0 0 -10
+objects 4
   sphere
     texture green_color
     position -1 0 -4

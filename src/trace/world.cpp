@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 #include <cfloat>
+#include <iostream>
 #include <math.h>
 
 #include "../core/constants.h"
@@ -41,10 +42,9 @@ Color World::computeDiffuse(const std::shared_ptr<Light>& light,
                             float spec_contrib, float& diff_contrib,
                             const Vector& sample_pos) {
   Vector pos_off = (sample_pos - intersect.pt).normalize();
-
   // The amount this light contributes is proportional to the dot
   // product of the relative light position and surface normal.
-  diff_contrib = intersect.nml.dot(pos_off);
+  diff_contrib = fabs(intersect.nml.dot(pos_off));
 
   // HACK: When there's specular, ignore the diffuse.
   diff_contrib *= (1 - spec_contrib);
@@ -114,8 +114,8 @@ Color World::computeLighting(const Intersection& intersect) {
   Color specular(0.0, 0.0, 0.0);
 
   for (int i = 0; i < (int)lightList.size(); i++) {
-    float spec_contrib;
-    float diff_contrib;
+    float spec_contrib = 0;
+    float diff_contrib = 0;
 
     // We do uniform random sampling on the surface area of this light source,
     // so the shadows will be soft.
@@ -135,7 +135,6 @@ Color World::computeLighting(const Intersection& intersect) {
                                    diff_contrib, sample_pos);
       }
     }
-
     cur_diff /= (1.0 * samples);
     cur_spec /= (1.0 * samples);
     diffuse += cur_diff * intersect.object->sampleTexture(intersect.pt);

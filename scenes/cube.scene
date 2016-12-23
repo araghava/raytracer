@@ -1,0 +1,13 @@
+parameters 2
+  resolution 512 512
+  antialias 2
+lights 1
+  pointlight
+    position -1 0 0
+    color 1 1 1
+    intensity 1
+objects 1
+  obj
+    filename ../models/cube.obj
+    position 0.5 0 -4
+lock

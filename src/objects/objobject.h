@@ -30,7 +30,7 @@ class ObjObject : public Object {
   bool rayTriangleIntersection(
     const Ray& ray,
     const std::vector<Vector>& triangle,
-    const Vector& faceNormal,
+    const std::vector<Vector>& normals,
     Intersection& intersection);
 
   tinyobj::attrib_t attrib;

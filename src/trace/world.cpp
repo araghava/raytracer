@@ -31,7 +31,7 @@ bool World::getClosestIntersection(const Ray& ray, Intersection& intersect) {
 
 Color World::traceRay(const Ray& ray) {
   Intersection inter;
-  if (getClosestIntersection(ray, inter) && inter.finalized) {
+  if (getClosestIntersection(ray, inter)) {
     return computeLighting(inter);
   }
   return Color(0, 0, 0);
@@ -42,13 +42,13 @@ Color World::computeDiffuse(const std::shared_ptr<Light>& light,
                             float spec_contrib, float& diff_contrib,
                             const Vector& sample_pos) {
   Vector pos_off = (sample_pos - intersect.pt).normalize();
+
   // The amount this light contributes is proportional to the dot
   // product of the relative light position and surface normal.
-  diff_contrib = fabs(intersect.nml.dot(pos_off));
+  diff_contrib = intersect.nml.dot(pos_off);
 
-  // HACK: When there's specular, ignore the diffuse.
+  // when there's specular, ignore the diffuse
   diff_contrib *= (1 - spec_contrib);
-
   if (diff_contrib >= 0.0) {
     return light->color * light->intensity * diff_contrib;
   }
@@ -72,7 +72,7 @@ Color World::computeSpecular(const std::shared_ptr<Light>& light,
     return c;
   }
 
-  float shininess = 25.0;
+  float shininess = 20.0;
   spec_contrib = pow(spec_contrib, shininess) * (shininess / 100.0);
 
   float amt = spec_contrib * light->intensity;
@@ -103,7 +103,8 @@ Color World::computeRefractiveReflective(const Intersection& intersect) {
     return Color(0, 0, 0);
 
   Vector incident = intersect.pt - intersect.ray.origin;
-  Ray r(intersect.pt, UTILreflectVector(incident, intersect.nml),
+  Ray r(intersect.pt,
+        UTILreflectVector(incident, intersect.nml),
         intersect.ray.remaining_casts - 1);
 
   return traceRay(r) * RAY_CAST_ATTENUATION;

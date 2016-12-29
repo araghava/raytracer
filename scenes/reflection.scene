@@ -1,6 +1,6 @@
 parameters 2
   resolution 128 128
-  antialias 2
+  antialias 1
 lights 2
   spherelight
     position -1.5 0.5 -2

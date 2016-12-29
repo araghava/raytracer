@@ -1,7 +1,7 @@
 #ifndef __PARSER_H
 #define __PARSER_H
 
-#include "../objects/texture.h"
+#include "../texture/texture.h"
 #include "raytracer.h"
 
 #include <istream>

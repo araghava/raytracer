@@ -3,23 +3,32 @@
 
 #include <memory>
 
-#include "texture.h"
+#include "../texture/texture.h"
 #include "../core/vector3.h"
 #include "../core/color.h"
 #include "../trace/ray.h"
+#include "../acceleration/box.h"
 
-struct Intersection;
-class Ray;
+class Object;
+
+struct Intersection {
+  Intersection(bool _f = false) : finalized(_f) {}
+
+  Ray ray;
+  Vector pt, nml;
+  Object* object;
+
+  bool finalized = false;
+};
 
 // Abstract Object.
 class Object {
 public:
-  Object() : texture(0) {}
+  Object() : texture(0), isPrimitive(true) {}
   virtual ~Object() = default;
 
   // Methods to be overriden by subclasses.
   virtual bool intersect(const Ray& ray, Intersection& intersection) = 0;
-  virtual bool contains(const Vector& point) const = 0;
 
   virtual Color sampleTexture(const Vector& pt) const {
     // TODO: get UV coordinate from pt...
@@ -46,6 +55,9 @@ public:
 protected:
   Vector center;
   std::shared_ptr<Texture> texture;
+  Box bBox;
+
+  bool isPrimitive;
 };
 
 // Abstract Light.

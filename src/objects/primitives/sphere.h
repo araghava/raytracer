@@ -1,9 +1,9 @@
 #ifndef __SPHERE_H
 #define __SPHERE_H
 
-#include "object.h"
-#include "../core/vector3.h"
-#include "../trace/ray.h"
+#include "../object.h"
+#include "../../core/vector3.h"
+#include "../../trace/ray.h"
 
 // Sphere object implementation.
 class Sphere : public Object {

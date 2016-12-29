@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <math.h>
 
-#include "../core/util.h"
+#include "../../core/util.h"
 
 bool Sphere::contains(const Vector& point) const {
   const float r = radius + 1e-6;

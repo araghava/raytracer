@@ -10,6 +10,7 @@ class ObjObject : public Object {
   ObjObject(const Vector& center, const std::string& fn) {
     setCenter(center);
     load(fn);
+    isPrimitive = false;
   }
   virtual ~ObjObject() = default;
 

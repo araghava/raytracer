@@ -6,8 +6,8 @@
 #include "../core/color.h"
 #include "../objects/object.h"
 #include "../objects/objobject.h"
-#include "../objects/sphere.h"
-#include "../objects/plane.h"
+#include "../objects/primitives/sphere.h"
+#include "../objects/primitives/plane.h"
 
 #define MAX_PARSER_LINE_COUNT 10000000
 

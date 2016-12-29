@@ -21,10 +21,30 @@ bool ObjObject::load(const std::string& fileName) {
     return false;
   }
 
+  // compute bounding box
+  for (size_t i = 0; i < shapes.size(); i++) {
+    size_t index_offset = 0;
+    for (size_t f = 0; f < shapes[i].mesh.num_face_vertices.size(); f++) {
+      size_t fnum = shapes[i].mesh.num_face_vertices[f];
+      for (size_t v = 0; v < fnum; v++) {
+        tinyobj::index_t idx = shapes[i].mesh.indices[index_offset + v];
+        bBox.extend(Vector(
+          attrib.vertices[3 * idx.vertex_index + 0],
+          attrib.vertices[3 * idx.vertex_index + 1],
+          attrib.vertices[3 * idx.vertex_index + 2]) + center);
+      }
+      index_offset += fnum;
+    }
+  }
+
   return true;
 }
 
 bool ObjObject::intersect(const Ray& ray, Intersection& intersection) {
+  if (!bBox.intersect(ray)) {
+    return false;
+  }
+
   for (size_t i = 0; i < shapes.size(); i++) {
     size_t index_offset = 0;
 

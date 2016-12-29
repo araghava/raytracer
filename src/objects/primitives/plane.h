@@ -1,11 +1,11 @@
 #ifndef __PLANE_H
 #define __PLANE_H
 
-#include "object.h"
+#include "../object.h"
 
-#include "../core/vector3.h"
-#include "../core/constants.h"
-#include "../trace/ray.h"
+#include "../../core/vector3.h"
+#include "../../core/constants.h"
+#include "../../trace/ray.h"
 
 #include <math.h>
 

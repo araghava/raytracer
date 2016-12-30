@@ -31,7 +31,7 @@ bool World::getClosestIntersection(const Ray& ray, Intersection& intersect) {
 
 Color World::traceRay(const Ray& ray) {
   Intersection inter;
-  if (getClosestIntersection(ray, inter)) {
+  if (getClosestIntersection(ray, inter) && inter.finalized) {
     return computeLighting(inter);
   }
   return Color(0, 0, 0);

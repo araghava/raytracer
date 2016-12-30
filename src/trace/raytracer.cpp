@@ -1,7 +1,7 @@
 #include "raytracer.h"
+#include <math.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <iostream>
 
 #include "../core/vector3.h"
 #include "../core/color.h"
@@ -70,7 +70,7 @@ bool Raytracer::render(const std::string& outpath) {
   Screen screen(renderParms.width, renderParms.height);
 
   // Split up the work to be done based on how many threads are available.
-  int chunkSize = renderParms.width / num_threads;
+  int chunkSize = ceil(1.0 * renderParms.width / num_threads);
   std::thread threads[num_threads];
 
   // Hold a color buffer here so that we don't have thread competition for

@@ -1,6 +1,8 @@
 #ifndef __VECTOR_H_
 #define __VECTOR_H_
 
+#include <ostream>
+
 // Utility 3-D vector class.
 class Vector {
 public:
@@ -37,6 +39,10 @@ public:
 
   Vector operator/(float scale) const;
   Vector &operator/=(float scale);
+
+  float operator[](size_t idx) const;
+
+  friend std::ostream& operator<<(std::ostream& o, const Vector &a);
 };
 
 #endif

@@ -1,14 +1,16 @@
 #include "box.h"
 
+#include "../core/util.h"
+
 Box::Box() :
   lowerBound(
     std::numeric_limits<float>::max(),
     std::numeric_limits<float>::max(),
     std::numeric_limits<float>::max()),
   upperBound(
-    std::numeric_limits<float>::min(),
-    std::numeric_limits<float>::min(),
-    std::numeric_limits<float>::min()) {}
+    -1 * std::numeric_limits<float>::max(),
+    -1 * std::numeric_limits<float>::max(),
+    -1 * std::numeric_limits<float>::max()) {}
 
 void Box::extend(const Vector& pt) {
   lowerBound.x = std::min(pt.x, lowerBound.x);
@@ -45,3 +47,30 @@ bool Box::intersect(const Ray& r) const {
   if (tmax < 0 || tmin > tmax) return false;
   return true;
 }
+
+Vector Box::getCenter() const {
+  return lowerBound * 0.5f + upperBound * 0.5f;
+}
+
+Box Box::constructFromFace(
+  const std::array<tinyobj::index_t, 3>& face,
+  const tinyobj::attrib_t& attrib,
+  const Vector& displace) {
+  Box ret;
+  ret.extend(UTILgetFaceVertex(face, attrib, 0) + displace);
+  ret.extend(UTILgetFaceVertex(face, attrib, 1) + displace);
+  ret.extend(UTILgetFaceVertex(face, attrib, 2) + displace);
+  return ret;
+}
+
+int Box::getMaxDimension() const {
+  float dx = upperBound.x - lowerBound.x;
+  float dy = upperBound.y - lowerBound.y;
+  float dz = upperBound.z - lowerBound.z;
+
+  if (dx > dy && dx > dz) return 0;
+  if (dy > dx && dy > dz) return 1;
+  if (dz > dx && dz > dy) return 2;
+  return 0;
+}
+

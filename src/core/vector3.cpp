@@ -1,5 +1,7 @@
 #include "vector3.h"
+
 #include <math.h>
+#include <stdexcept>
 
 Vector &Vector::normalize() { return (*this) /= this->length(); }
 
@@ -73,4 +75,16 @@ Vector &Vector::operator/=(float scale) {
   y /= scale;
   z /= scale;
   return *this;
+}
+
+float Vector::operator[](size_t idx) const {
+  if (idx == 0) return x;
+  else if (idx == 1) return y;
+  else if (idx == 2) return z;
+  throw std::out_of_range ("idx should be within [0, 2]");
+}
+
+std::ostream& operator<<(std::ostream& os, const Vector& v) {
+  os << "(" << v.x << ", " << v.y << ", " << v.z << ")";
+  return os;
 }

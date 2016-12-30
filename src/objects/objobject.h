@@ -11,7 +11,8 @@
 // Holds a triangular mesh and BVH to represent a .OBJ file.
 class ObjObject : public Object {
  public:
-  ObjObject(const Vector& center, const std::string& fn) {
+  ObjObject(const Vector& center, const std::string& fn)
+    : bvh(4) {
     setCenter(center);
     load(fn);
     isPrimitive = false;

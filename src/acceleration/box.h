@@ -19,10 +19,10 @@ class Box {
   void extend(const Vector& pt);
   void extend(const Box& box);
 
-  //bool intersect(const Ray& r) const;
   bool intersect(const Ray& r) const;
   Vector getCenter() const;
 
+  bool isInside(const Vector& p) const;
   int getMaxDimension() const;
 
   static Box constructFromFace(

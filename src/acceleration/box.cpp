@@ -32,20 +32,60 @@ void Box::extend(const Box& box) {
   upperBound.z = std::max(box.upperBound.z, upperBound.z);
 }
 
+bool Box::isInside(const Vector& p) const {
+  return !((lowerBound.x > p.x || upperBound.x < p.x)
+         || (lowerBound.y > p.y || upperBound.y < p.y)
+         || (lowerBound.z > p.z || upperBound.z < p.z));
+}
+
 bool Box::intersect(const Ray& r) const {
-  Vector dirInv = r.inverseDirection;
-  float t1 = (lowerBound.x - r.origin.x) * dirInv.x;
-  float t2 = (upperBound.x - r.origin.x) * dirInv.x;
-  float t3 = (lowerBound.y - r.origin.y) * dirInv.y;
-  float t4 = (upperBound.y - r.origin.y) * dirInv.y;
-  float t5 = (lowerBound.z - r.origin.z) * dirInv.z;
-  float t6 = (upperBound.z - r.origin.z) * dirInv.z;
+  if (isInside(r.origin)) {
+    return true;
+  }
 
-  float tmin = std::max(std::max(std::min(t1, t2), std::min(t3, t4)), std::min(t5, t6));
-  float tmax = std::min(std::min(std::max(t1, t2), std::max(t3, t4)), std::max(t5, t6));
+  float minX = r.direction.x == 0.0 ?
+    -1 * std::numeric_limits<float>::max() : (lowerBound.x - r.origin.x) / r.direction.x;
+  float maxX = r.direction.x == 0.0 ?
+    std::numeric_limits<float>::max() : (upperBound.x - r.origin.x) / r.direction.x;
+  float minY = r.direction.y == 0.0 ?
+    -1 * std::numeric_limits<float>::max() : (lowerBound.y - r.origin.y) / r.direction.y;
+  float maxY = r.direction.y == 0.0 ?
+    std::numeric_limits<float>::max() : (upperBound.y - r.origin.y) / r.direction.y;
+  if(minX > maxX) {
+    std::swap(minX, maxX);
+  }
+  if(minY > maxY) {
+    std::swap(minY, maxY);
+  }
 
-  if (tmax < 0 || tmin > tmax) return false;
-  return true;
+  if (!(minX <= maxY && minY <= maxX)) {
+    return false;
+  }
+
+  float minT = std::max(minX, minY);
+  float maxT = std::min(maxX, maxY);
+
+  float minZ = r.direction.z == 0.0 ?
+    -1 * std::numeric_limits<float>::max() : (lowerBound.z - r.origin.z) / r.direction.z;
+  float maxZ = r.direction.z == 0.0 ?
+    std::numeric_limits<float>::max() : (upperBound.z - r.origin.z) / r.direction.z;
+  if(minZ > maxZ) {
+    std::swap(minZ, maxZ);
+  }
+
+  if(!(minT <= maxZ && minZ <= maxT)) {
+    return false;
+  }
+
+  minT = std::max(minT, minZ);
+  maxT = std::min(maxT, maxZ);
+
+  // make sure ray enters before leaving and all hits are along +ve direction
+  if(minT <= maxT && minT > 0.0){
+    return true;
+  }
+
+  return false;
 }
 
 Vector Box::getCenter() const {

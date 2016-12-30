@@ -2,6 +2,7 @@
 #define __OBJOBJECT_H
 
 #include <array>
+#include <unordered_map>
 
 #include "object.h"
 
@@ -12,23 +13,21 @@
 class ObjObject : public Object {
  public:
   ObjObject(const Vector& center, const std::string& fn)
-    : bvh(4) {
+    : bvh(4), hasMaterials(false) {
     setCenter(center);
     load(fn);
-    isPrimitive = false;
   }
   virtual ~ObjObject() = default;
 
-  // Currently checks every triangle, but should be implemented with an acceleration
-  // data structure (BVH/octree).
   virtual bool intersect(const Ray& ray, Intersection& intersection);
-  virtual bool contains(const Vector& point) const {
-    return true;
+
+  virtual std::string getTextureOfFace(const size_t idx) {
+    return !hasMaterials ? "null" : faceTextureMap[idx];
   }
 
   bool load(const std::string& fileName);
 
-  virtual Color sampleTexture(const Vector& pt) const;
+  virtual Color sampleTexture(const std::string& textureName);
 
  private:
   // Populates intersection struct if the ray hits the triangle and the intersection
@@ -52,8 +51,12 @@ class ObjObject : public Object {
   //     attrib.vertices(faces[3][1] + 2)); // z
   std::vector<std::array<tinyobj::index_t, 3>> faces;
 
+  std::unordered_map<size_t, std::string> faceTextureMap;
+
   // Bounding volume hierarchy to avoid too many ray-triangle intersection tests.
   Bvh bvh;
+
+  bool hasMaterials;
 };
 
 #endif

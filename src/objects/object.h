@@ -2,6 +2,7 @@
 #define __OBJECT_H
 
 #include <memory>
+#include <unordered_map>
 
 #include "../texture/texture.h"
 #include "../core/vector3.h"
@@ -17,6 +18,7 @@ struct Intersection {
   Ray ray;
   Vector pt, nml;
   Object* object;
+  std::string textureName;
 
   bool finalized = false;
 };
@@ -24,24 +26,28 @@ struct Intersection {
 // Abstract Object.
 class Object {
 public:
-  Object() : texture(0), isPrimitive(true) {}
+  Object() {
+    textureMap["null"] = std::make_shared<NoopTexture>("null");
+  }
   virtual ~Object() = default;
 
   // Methods to be overriden by subclasses.
   virtual bool intersect(const Ray& ray, Intersection& intersection) = 0;
 
-  virtual Color sampleTexture(const Vector& pt) const {
+  virtual Color sampleTexture(const std::string& textureName) {
     // TODO: get UV coordinate from pt...
     const double u = 0, v = 0;
-    if (texture) {
-      return texture->sample(u, v);
+    if (textureMap.count(textureName)) {
+      return textureMap[textureName]->sample(u, v);
     }
 
     return Color(1, 1, 1);
   }
 
-  void setTexture(std::shared_ptr<Texture> t) {
-    texture = t;
+  void addTexture(const std::string& key, std::shared_ptr<Texture> t) {
+    // Generic textures are applied to the whole thing, so get rid of the noop.
+    textureMap.erase("null");
+    textureMap[key] = t;
   }
 
   Vector getCenter() const {
@@ -52,12 +58,18 @@ public:
     center = pt;
   }
 
+  virtual std::string getTextureOfFace(const size_t idx) {
+    for (const auto& pair : textureMap) {
+      return pair.first;
+    }
+    return "";
+  }
+
 protected:
   Vector center;
-  std::shared_ptr<Texture> texture;
   Box bBox;
 
-  bool isPrimitive;
+  std::unordered_map<std::string, std::shared_ptr<Texture>> textureMap;
 };
 
 // Abstract Light.

@@ -184,6 +184,7 @@ bool Bvh::rayTriangleIntersection(
           intersection.pt = pt;
           intersection.nml = nml;
           intersection.ray = ray;
+          intersection.textureName = objectPtr->getTextureOfFace(faceIdx);
           intersection.finalized = true;
 
           if (back) {

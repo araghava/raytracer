@@ -47,7 +47,11 @@ public:
     intersection.ray = ray;
     intersection.pt = ray.origin + ray.direction * u;
     intersection.nml = nml;
+    for (const auto& pair : textureMap) {
+      intersection.textureName = pair.first;
+    }
     intersection.finalized = true;
+
     return true;
   }
 

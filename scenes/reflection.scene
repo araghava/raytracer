@@ -1,7 +1,7 @@
 parameters 2
   resolution 1024 1024
   antialias 2
-lights 2
+lights 3
   spherelight
     position -1.5 0.5 -2
     color 1 1 1
@@ -12,6 +12,10 @@ lights 2
     color 1 1 1
     intensity 0.6
     radius 0.2
+  pointlight
+    position 0 0 0
+    color 1 1 1
+    intensity 1
 textures 3
   green_color
     solid 0 0.75 0
@@ -19,18 +23,14 @@ textures 3
     solid 0.75 0 0
   blue_color
     solid 0 0 0.75
-objects 5
-  sphere
-    texture green_color
-    position -1 0 -4
-    radius .5
+objects 4
   sphere
     texture red_color
-    position 0 0 -3
-    radius .5
+    position 0.5 -0.3 -2
+    radius .2
   sphere
     texture blue_color
-    position 1 0 -4
+    position 1 0 -3
     radius .5
   plane
     texture null
@@ -39,5 +39,5 @@ objects 5
     v3 1 -0.5 1
   obj
     filename ../models/teapot.obj
-    position -0.5 1 -4.5
+    position -0.75 -0.25 -3
 lock

@@ -138,7 +138,7 @@ Color World::computeLighting(const Intersection& intersect) {
     }
     cur_diff /= (1.0 * samples);
     cur_spec /= (1.0 * samples);
-    diffuse += cur_diff * intersect.object->sampleTexture(intersect.pt);
+    diffuse += cur_diff * intersect.object->sampleTexture(intersect.textureName);
     specular += cur_spec;
   }
 

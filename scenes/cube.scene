@@ -1,13 +1,18 @@
 parameters 2
   resolution 512 512
   antialias 2
-lights 1
+lights 2
   pointlight
     position 0 0 0
     color 1 1 1
     intensity 0.6
+  spherelight
+    position 0 2.5 -4
+    color 1 1 1
+    intensity 1
+    radius 1
 objects 1
   obj
     filename ../models/cube.obj
-    position 2.5 -1 -8
+    position 2.5 -2 -8
 lock

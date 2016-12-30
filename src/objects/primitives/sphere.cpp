@@ -54,6 +54,9 @@ bool Sphere::intersect(const Ray& ray, Intersection& intersection) {
   intersection.pt = pt;
   intersection.nml = nml;
   intersection.ray = ray;
+  for (const auto& pair : textureMap) {
+    intersection.textureName = pair.first;
+  }
   intersection.finalized = true;
   return true;
 }

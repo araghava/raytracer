@@ -8,8 +8,7 @@
 // Sphere object implementation.
 class Sphere : public Object {
 public:
-  Sphere(const Vector c_, const float rad) : radius(rad) {
-    setCenter(c_);
+  Sphere(const float rad) : radius(rad) {
   }
   virtual ~Sphere() = default;
 
@@ -27,9 +26,8 @@ private:
 // Sphere area light implementation.
 class SphereLight : public Light {
 public:
-  SphereLight(const Vector& p, const Color c,
-              const float inten, const float rad)
-      : Light(p, c, inten) {
+  SphereLight(const Color c, const float inten, const float rad)
+      : Light(c, inten) {
     radius = rad;
   }
   virtual ~SphereLight() {}

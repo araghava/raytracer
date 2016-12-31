@@ -43,8 +43,11 @@ public:
 
   void addObject(std::shared_ptr<Object>& obj);
   void addLight(std::shared_ptr<Light>& light);
-  void setParms(RenderParms parms) {
-    renderParms = parms;
+  void setCamera(std::shared_ptr<Camera>& cam) {
+    camera = cam;
+  }
+  std::shared_ptr<Camera> getCamera() {
+    return camera;
   }
 
   bool render(const std::string& out_path);
@@ -53,14 +56,14 @@ public:
   Color tracePrimaryRay(const Vector& origin, const Vector& direction);
 
 private:
-  RenderParms renderParms;
-
   std::vector<std::shared_ptr<Object>> objectList;
   std::vector<std::shared_ptr<Light>> lightList;
 
   World world;
 
   const int numThreads;
+
+  std::shared_ptr<Camera> camera;
 };
 
 #endif

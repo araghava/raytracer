@@ -34,5 +34,5 @@ Vector UTILgetFaceNormal(
 
 Vector UTILtransformVector(
   const Vector& vector, const Transform& transform) {
-  return transform.rotation * vector + transform.translation;
+  return transform.rotation * (vector * transform.scale) + transform.translation;
 }

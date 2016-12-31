@@ -6,7 +6,7 @@
 
 #include "../core/util.h"
 
-bool ObjObject::load(const std::string& fileName) {
+bool ObjObject::load() {
   std::cout << "Loading " << fileName << std::endl;
 
   std::string err;
@@ -30,10 +30,10 @@ bool ObjObject::load(const std::string& fileName) {
 
       for (size_t v = 0; v < fnum; v++) {
         tinyobj::index_t idx = shapes[i].mesh.indices[index_offset + v];
-        bBox.extend(Vector(
+        bBox.extend(UTILtransformVector(Vector(
           attrib.vertices[3 * idx.vertex_index + 0],
           attrib.vertices[3 * idx.vertex_index + 1],
-          attrib.vertices[3 * idx.vertex_index + 2]) + transform.translation);
+          attrib.vertices[3 * idx.vertex_index + 2]), transform));
         face[v] = idx;
       }
 
@@ -52,6 +52,5 @@ bool ObjObject::intersect(const Ray& ray, Intersection& intersection) {
   if (!bBox.intersect(ray)) {
     return false;
   }
-
   return bvh.intersect(ray, intersection);
 }

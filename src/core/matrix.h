@@ -18,8 +18,11 @@ class Matrix {
 
   Matrix operator+(const Matrix& other) const;
   Matrix operator-(const Matrix& other) const;
+  Matrix operator*(const Matrix& other) const;
   const float* operator[](int i) const;
   friend std::ostream& operator<<(std::ostream& o, const Matrix& mat);
+
+  static Matrix fromRotation(const Vector& axis, const float degrees);
 
  private:
   float data[3][3];
@@ -30,6 +33,7 @@ Vector operator*(const Matrix& mat, const Vector& pt);
 struct Transform {
   Matrix rotation;
   Vector translation;
+  Vector scale = Vector(1, 1, 1);
 };
 
 #endif

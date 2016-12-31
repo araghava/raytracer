@@ -1,11 +1,14 @@
 #ifndef __COLOR_H_
 #define __COLOR_H_
 
+#include "vector3.h"
+
 // Utility color class.
 class Color {
 public:
   float r, g, b, a;
   Color() : r(0.), g(0.), b(0.), a(1.) {}
+  Color(const Vector& v) : r(v.x), g(v.y), b(v.z) {}
   Color(float _r, float _g, float _b) : r(_r), g(_g), b(_b), a(1.) {}
   Color(float _r, float _g, float _b, float _a) : r(_r), g(_g), b(_b), a(_a) {}
 

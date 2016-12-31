@@ -1,0 +1,45 @@
+<xml>
+  <scene>
+    <object type="obj" filename="../models/teapot.obj" texture="cyan">
+      <position x="-0.75" y="-0.25" z="-3" />
+      <scale x="1" y="1" z="1" />
+    </object>
+    <object type="sphere" radius="0.2" texture="red">
+      <position x="0.5" y="-0.3" z="-2" />
+    </object>
+    <object type="sphere" radius="0.5" texture="blue">
+      <position x="1" y="0" z="-3" />
+    </object>
+    <object type="plane" x1="0" y1="-0.5" z1="-5" x2="-1" y2="-0.5" z2="1" x3="1" y3="-0.5" z3="1" />
+
+    <light type="sphere" radius="0.2" intensity="0.6">
+      <position x="-1.5" y="0.5" z="-2" />
+      <color r="1" g="1" b="1" />
+    </light>
+    <light type="sphere" radius="1" intensity="0.6">
+      <position x="1.5" y="0.5" z="-2" />
+      <color r="1" g="1" b="1" />
+    </light>
+    <light type="point" intensity="0.6">
+      <position x="0" y="0" z="0" />
+      <color r="1" g="1" b="1" />
+    </light>
+
+    <texture name="red">
+      <diffuse r="1" g="0" b="0" />
+    </texture>
+    <texture name="blue">
+      <diffuse r="0" g="0" b="1" />
+    </texture>
+    <texture name="cyan">
+      <diffuse r="0" g="0.5" b="0.5" />
+    </texture>
+  </scene>
+
+  <camera>
+    <position x="0" y="0" z="0" />
+    <direction x="0" y="0" z="-1" />
+    <up x="0" y="0" z="1" />
+    <resolution width="128" height="128" antialias="1" />
+  </camera>
+</xml>

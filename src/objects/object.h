@@ -32,6 +32,9 @@ public:
 
   // Methods to be overriden by subclasses.
   virtual bool intersect(const Ray& ray, Intersection& intersection) = 0;
+  virtual bool load() {
+    return true;
+  }
 
   virtual Color sampleTexture(const Vector& pt) {
     // TODO: get UV coordinate from pt...
@@ -43,6 +46,10 @@ public:
     texture = t;
   }
 
+  void setTransform(const Transform& t) {
+    transform = t;
+  }
+
   Transform getTransform() const {
     return transform;
   }
@@ -51,18 +58,18 @@ public:
     transform.translation = pt;
   }
 
+  Transform transform;
 protected:
   Box bBox;
-  Transform transform;
   std::shared_ptr<Texture> texture;
 };
 
 // Abstract Light.
 class Light {
 public:
-  Light(const Vector& p, Color c, float inten)
-      : position(p), color(c), intensity(inten) {}
-  virtual ~Light() {}
+  Light(Color c, float inten) : color(c), intensity(inten) {
+  }
+  virtual ~Light() = default;
 
   // This gets the number of samples to use when trying to determine luminance
   // from a light. This is needed for area lights (to create soft shadows).
@@ -73,6 +80,10 @@ public:
   // point on the surface of the light object.
   virtual void sample(Vector& point) const = 0;
 
+  void setTransform(const Transform& t) {
+    position = t.translation;
+  }
+
   Vector position;
   Color color;
   float intensity;
@@ -80,13 +91,18 @@ public:
 
 class PointLight : public Light {
 public:
-  PointLight(const Vector& p, Color c, float inten) : Light(p, c, inten) {}
+  PointLight(Color c, float inten) : Light(c, inten) {
+  }
   virtual ~PointLight() = default;
 
   // A point light isn't an area, so we can only take one sample.
-  virtual int getNumSamples() const { return 1; }
+  virtual int getNumSamples() const {
+    return 1;
+  }
 
-  virtual void sample(Vector& point) const { point = position; }
+  virtual void sample(Vector& point) const {
+    point = position;
+  }
 };
 
 #endif

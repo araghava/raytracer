@@ -6,8 +6,8 @@
 #include <istream>
 #include <fstream>
 
+#include "trace/xmlparser.h"
 #include "trace/raytracer.h"
-#include "trace/parser.h"
 #include "core/matrix.h"
 
 namespace {
@@ -52,32 +52,22 @@ int main(int argc, char **argv) {
     }
   }
 
+  if (scene_file.empty()) {
+    std::cout << "Please provide a scene file" << std::endl;
+    return 1;
+  }
+
   Raytracer tracer(threads <= 0 ? std::thread::hardware_concurrency() : threads);
-  Parser parser;
   std::string err, out;
 
-  if (!scene_file.empty()) {
-    std::ifstream scene;
-    scene.open(scene_file.c_str(), std::ifstream::in);
-
-    if (!parser.createWorld(&tracer, err, scene)) {
-      std::cout << err << "\n";
-      return 1;
-    }
-    scene.close();
-  } else {
-    if (!parser.createWorld(&tracer, err, std::cin)) {
-      std::cout << err << "\n";
-      return 1;
-    }
-  }
+  XMLParser parser(&tracer, scene_file);
+  parser.parse();
 
   out = DEFAULT_IMAGE_OUT;
   if (out_file.empty()) {
     out = out_file;
   }
 
-  scene.close();
   tracer.render(out.c_str());
   return 0;
 }

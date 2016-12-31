@@ -12,16 +12,13 @@
 // Holds a triangular mesh and BVH to represent a .OBJ file.
 class ObjObject : public Object {
  public:
-  ObjObject(const Vector& center, const std::string& fn)
-    : bvh(4) {
-    setCenter(center);
-    load(fn);
+  ObjObject(const std::string& fn) : bvh(4), fileName(fn) {
   }
   virtual ~ObjObject() = default;
 
   virtual bool intersect(const Ray& ray, Intersection& intersection);
 
-  bool load(const std::string& fileName);
+  bool load();
 
  private:
   // Populates intersection struct if the ray hits the triangle and the intersection
@@ -47,6 +44,8 @@ class ObjObject : public Object {
 
   // Bounding volume hierarchy to avoid too many ray-triangle intersection tests.
   Bvh bvh;
+
+  std::string fileName;
 };
 
 #endif

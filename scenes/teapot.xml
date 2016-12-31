@@ -1,0 +1,20 @@
+<xml>
+  <scene>
+    <object type="obj" filename="../models/teapot.obj">
+      <position x="0" y="0" z="-2" />
+      <scale x="1" y="1" z="1" />
+    </object>
+
+    <light type="sphere" radius="1" intensity="0.6">
+      <position x="0" y="0" z="0" />
+      <color r="1" g="1" b="1" />
+    </light>
+  </scene>
+
+  <camera>
+    <position x="0" y="0" z="0" />
+    <direction x="0" y="0" z="-1" />
+    <up x="0" y="0" z="1" />
+    <resolution width="128" height="128" antialias="2" />
+  </camera>
+</xml>

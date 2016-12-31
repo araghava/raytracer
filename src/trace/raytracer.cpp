@@ -8,8 +8,6 @@
 #include "../core/constants.h"
 
 Raytracer::Raytracer(const int nt) : numThreads(nt) {
-  RenderParms p;
-  setParms(p);
 }
 
 void Raytracer::addObject(std::shared_ptr<Object>& obj) {
@@ -29,31 +27,31 @@ Color Raytracer::tracePrimaryRay(const Vector& origin,
 }
 
 void raytrace_threading_fn(RaytraceThreadParms* p) {
-  int pxWidth = p->parms->width * p->parms->antialias;
-  int pxHeight = p->parms->height * p->parms->antialias;
+  int pxWidth = p->raytracer->getCamera()->width * p->raytracer->getCamera()->antialias;
+  int pxHeight = p->raytracer->getCamera()->height * p->raytracer->getCamera()->antialias;
   int pxSmaller = std::min(pxWidth, pxHeight);
 
   float zoomFactor = pxSmaller;
-  Vector camera(0.0, 0.0, 0.0);
-  Vector direction(0.0, 0.0, -1.0);
+  Vector camera = p->raytracer->getCamera()->pos;
+  Vector direction = p->raytracer->getCamera()->dir;
 
   for (int i = p->start_row; i <= p->end_row; i++) {
-    for (int j = 0; j < p->parms->height; j++) {
-      int a_i = i * p->parms->antialias;
-      int a_j = j * p->parms->antialias;
+    for (int j = 0; j < p->raytracer->getCamera()->height; j++) {
+      int a_i = i * p->raytracer->getCamera()->antialias;
+      int a_j = j * p->raytracer->getCamera()->antialias;
 
       // For each pixel, shoot aa*aa primary rays, where aa is the antialiasing
       // factor. Average the results of these color values.
       Color avg(0.0, 0.0, 0.0);
-      for (int ii = a_i; ii < a_i + p->parms->antialias; ii++) {
+      for (int ii = a_i; ii < a_i + p->raytracer->getCamera()->antialias; ii++) {
         direction.x = (ii - 0.5 * pxWidth) / zoomFactor;
-        for (int jj = a_j; jj < a_j + p->parms->antialias; jj++) {
+        for (int jj = a_j; jj < a_j + p->raytracer->getCamera()->antialias; jj++) {
           direction.y = (jj - 0.5 * pxHeight) / zoomFactor;
           direction.normalize();
           avg += p->raytracer->tracePrimaryRay(camera, direction);
         }
       }
-      avg /= (1.0 * p->parms->antialias * p->parms->antialias);
+      avg /= (1.0 * p->raytracer->getCamera()->antialias * p->raytracer->getCamera()->antialias);
       p->buffer[i][j] = avg;
     }
 
@@ -64,28 +62,27 @@ void raytrace_threading_fn(RaytraceThreadParms* p) {
 }
 
 bool Raytracer::render(const std::string& outpath) {
-  ProgressReporter progressReporter(renderParms.width);
+  ProgressReporter progressReporter(camera->width);
 
   int num_threads = std::max(numThreads, 1);
-  Screen screen(renderParms.width, renderParms.height);
+  Screen screen(camera->width, camera->height);
 
   // Split up the work to be done based on how many threads are available.
-  int chunkSize = ceil(1.0 * renderParms.width / num_threads);
+  int chunkSize = ceil(1.0 * camera->width / num_threads);
   std::thread threads[num_threads];
 
   // Hold a color buffer here so that we don't have thread competition for
   // screen.setPixel.
   // After we join all the threads, write out the image.
-  Color **buffer = new Color *[renderParms.width];
-  for (int i = 0; i < renderParms.width; i++)
-    buffer[i] = new Color[renderParms.height];
+  Color **buffer = new Color *[camera->width];
+  for (int i = 0; i < camera->width; i++)
+    buffer[i] = new Color[camera->height];
 
   for (int i = 0; i < num_threads; i++) {
     const int start = i * chunkSize;
-    const int end = std::min(renderParms.width - 1, start + chunkSize - 1);
+    const int end = std::min(camera->width - 1, start + chunkSize - 1);
     RaytraceThreadParms *parms = new RaytraceThreadParms();
     parms->raytracer = this;
-    parms->parms = &renderParms;
     parms->start_row = start;
     parms->end_row = end;
     parms->buffer = buffer;
@@ -102,12 +99,12 @@ bool Raytracer::render(const std::string& outpath) {
 
   progressReporter.finalize();
 
-  for (int i = 0; i < renderParms.width; i++)
-    for (int j = 0; j < renderParms.height; j++)
+  for (int i = 0; i < camera->width; i++)
+    for (int j = 0; j < camera->height; j++)
       screen.setPixel(i, j, buffer[i][j]);
 
   // Free temp buffer memory.
-  for (int i = 0; i < renderParms.width; i++)
+  for (int i = 0; i < camera->width; i++)
     delete[] buffer[i];
   delete[] buffer;
 

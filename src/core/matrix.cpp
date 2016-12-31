@@ -53,6 +53,12 @@ void Matrix::setRotation(const Vector& axis, const float degrees) {
   data[2][2] = tz * axis.z + ct;
 }
 
+Matrix Matrix::fromRotation(const Vector& axis, const float degrees) {
+  Matrix rot;
+  rot.setRotation(axis, degrees);
+  return rot;
+}
+
 std::ostream& operator<<(std::ostream& os, const Matrix& mat) {
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
@@ -89,9 +95,28 @@ const float* Matrix::operator[](int i) const {
   return data[i];
 }
 
+Matrix Matrix::operator*(const Matrix& a) const {
+  Matrix ret;
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      ret.set(i, j, 0);
+    }
+  }
+
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      for (int k = 0; k < 3; k++) {
+        ret.set(i, j, data[i][k] * a[k][j]);
+      }
+    }
+  }
+  return ret;
+}
+
 Vector operator*(const Matrix& mat, const Vector& pt) {
   return Vector(
     pt.x * mat[0][0] + pt.y * mat[0][1] + pt.z * mat[0][2],
     pt.x * mat[1][0] + pt.y * mat[1][1] + pt.z * mat[1][2],
     pt.x * mat[2][0] + pt.y * mat[2][1] + pt.z * mat[2][2]);
 }
+

@@ -16,7 +16,8 @@ DEPS = acceleration/box.o \
 	trace/screen.o \
 	trace/world.o \
 	trace/raytracer.o \
-	trace/parser.o \
+	trace/xmlparser.o \
+  external/tinyxml2.o
 
 $(TARGET): clean $(DEPS) $(TARGET).cpp
 	$(CC) $(CFLAGS) $(TARGET).cpp -o raytrace $(DEPS) $(LINKS)
@@ -39,12 +40,15 @@ trace/raytracer.o: trace/raytracer.cpp trace/raytracer.h
 	$(CC) $(CFLAGS) -c trace/raytracer.cpp -o trace/raytracer.o
 trace/world.o: trace/world.cpp trace/world.h
 	$(CC) $(CFLAGS) -c trace/world.cpp -o trace/world.o
-trace/parser.o: trace/parser.cpp trace/parser.h
-	$(CC) $(CFLAGS) -c trace/parser.cpp -o trace/parser.o
+trace/xmlparser.o: trace/xmlparser.cpp trace/xmlparser.h
+	$(CC) $(CFLAGS) -c trace/xmlparser.cpp -o trace/xmlparser.o
 objects/objobject.o: objects/objobject.cpp objects/objobject.h
 	$(CC) $(CFLAGS) -c objects/objobject.cpp -o objects/objobject.o
 objects/primitives/sphere.o: objects/primitives/sphere.cpp objects/primitives/sphere.h
 	$(CC) $(CFLAGS) -c objects/primitives/sphere.cpp -o objects/primitives/sphere.o
 
+external/tinyxml2.o: external/tinyxml2.cpp external/tinyxml2.h
+	$(CC) $(CFLAGS) -c external/tinyxml2.cpp -o external/tinyxml2.o
+
 clean:
-	rm -f raytrace *.o core/*.o trace/*.o objects/*.o acceleration/*.o objects/primitives/*.o
+	rm -f raytrace *.o core/*.o trace/*.o objects/*.o acceleration/*.o objects/primitives/*.o external/*.o

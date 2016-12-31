@@ -62,7 +62,7 @@ class Bvh {
   tinyobj::attrib_t* attrib;
 
   // Max. number of faces per leaf node.
-  const int maxFacesInNode;
+  const size_t maxFacesInNode;
 
   // After tree construction, we want the faces for each leaf to occupy
   // continuous ranges (so we can keep track of what faces belong to what

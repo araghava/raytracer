@@ -38,23 +38,12 @@ bool ObjObject::load(const std::string& fileName) {
       }
 
       faces.push_back(std::move(face));
-
-      if (!materials.empty()) {
-        faceTextureMap[faces.size() - 1] = materials[shapes[i].mesh.material_ids[f]].name;
-        hasMaterials = true;
-      }
       index_offset += fnum;
     }
   }
 
   bvh.setMesh(&faces, &attrib, this);
   bvh.buildTree();
-
-  for (size_t i = 0; i < materials.size(); i++) {
-    textureMap[materials[i].name] = std::make_shared<SolidTexture>(
-      materials[i].name,
-      Color(materials[i].diffuse[0], materials[i].diffuse[1], materials[i].diffuse[2]));
-  }
 
   return true;
 }
@@ -65,8 +54,4 @@ bool ObjObject::intersect(const Ray& ray, Intersection& intersection) {
   }
 
   return bvh.intersect(ray, intersection);
-}
-
-Color ObjObject::sampleTexture(const std::string& textureName) {
-  return textureMap[textureName]->sample(0, 0);
 }

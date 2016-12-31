@@ -13,7 +13,7 @@
 class ObjObject : public Object {
  public:
   ObjObject(const Vector& center, const std::string& fn)
-    : bvh(4), hasMaterials(false) {
+    : bvh(4) {
     setCenter(center);
     load(fn);
   }
@@ -21,13 +21,7 @@ class ObjObject : public Object {
 
   virtual bool intersect(const Ray& ray, Intersection& intersection);
 
-  virtual std::string getTextureOfFace(const size_t idx) {
-    return !hasMaterials ? "null" : faceTextureMap[idx];
-  }
-
   bool load(const std::string& fileName);
-
-  virtual Color sampleTexture(const std::string& textureName);
 
  private:
   // Populates intersection struct if the ray hits the triangle and the intersection
@@ -51,12 +45,8 @@ class ObjObject : public Object {
   //     attrib.vertices(faces[3][1] + 2)); // z
   std::vector<std::array<tinyobj::index_t, 3>> faces;
 
-  std::unordered_map<size_t, std::string> faceTextureMap;
-
   // Bounding volume hierarchy to avoid too many ray-triangle intersection tests.
   Bvh bvh;
-
-  bool hasMaterials;
 };
 
 #endif

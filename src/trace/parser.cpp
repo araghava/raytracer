@@ -114,7 +114,7 @@ bool Parser::parseObjects(Raytracer* const tracer, const int oc, std::istream &i
         v3 = Vector(x3, y3, z3);
         o = std::make_shared<Plane>(v1, v2, v3);
       }
-      o->addTexture(tex, textureMap[tex]);
+      o->setTexture(textureMap[tex]);
     }
     tracer->addObject(o);
   }

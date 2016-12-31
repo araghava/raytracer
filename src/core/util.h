@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <vector>
 
-#include "tiny_obj_loader.h"
+#include "../external/tiny_obj_loader.h"
 #include "vector3.h"
 
 // Returns a random float in the range [min, max].

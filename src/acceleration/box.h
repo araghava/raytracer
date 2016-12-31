@@ -6,8 +6,8 @@
 
 #include <math.h>
 #include <float.h>
-#include "../core/tiny_obj_loader.h"
 #include "../core/vector3.h"
+#include "../external/tiny_obj_loader.h"
 #include "../trace/ray.h"
 
 // Axis-aligned bounding box.

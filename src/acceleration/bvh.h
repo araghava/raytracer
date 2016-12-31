@@ -7,9 +7,9 @@
 #include <vector>
 
 #include "box.h"
-#include "../core/tiny_obj_loader.h"
-#include "../trace/ray.h"
+#include "../external/tiny_obj_loader.h"
 #include "../objects/object.h"
+#include "../trace/ray.h"
 
 struct BvhFace;
 struct BvhNode;

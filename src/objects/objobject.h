@@ -7,7 +7,7 @@
 #include "object.h"
 
 #include "../acceleration/bvh.h"
-#include "../core/tiny_obj_loader.h"
+#include "../external/tiny_obj_loader.h"
 
 // Holds a triangular mesh and BVH to represent a .OBJ file.
 class ObjObject : public Object {

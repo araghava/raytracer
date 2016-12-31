@@ -95,11 +95,11 @@ Vector Box::getCenter() const {
 Box Box::constructFromFace(
   const std::array<tinyobj::index_t, 3>& face,
   const tinyobj::attrib_t& attrib,
-  const Vector& displace) {
+  const Transform& transform) {
   Box ret;
-  ret.extend(UTILgetFaceVertex(face, attrib, 0) + displace);
-  ret.extend(UTILgetFaceVertex(face, attrib, 1) + displace);
-  ret.extend(UTILgetFaceVertex(face, attrib, 2) + displace);
+  ret.extend(UTILtransformVector(UTILgetFaceVertex(face, attrib, 0), transform));
+  ret.extend(UTILtransformVector(UTILgetFaceVertex(face, attrib, 1), transform));
+  ret.extend(UTILtransformVector(UTILgetFaceVertex(face, attrib, 2), transform));
   return ret;
 }
 

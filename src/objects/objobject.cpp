@@ -33,7 +33,7 @@ bool ObjObject::load(const std::string& fileName) {
         bBox.extend(Vector(
           attrib.vertices[3 * idx.vertex_index + 0],
           attrib.vertices[3 * idx.vertex_index + 1],
-          attrib.vertices[3 * idx.vertex_index + 2]) + center);
+          attrib.vertices[3 * idx.vertex_index + 2]) + transform.translation);
         face[v] = idx;
       }
 

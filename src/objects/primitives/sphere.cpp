@@ -7,11 +7,6 @@
 
 #include "../../core/util.h"
 
-bool Sphere::contains(const Vector& point) const {
-  const float r = radius + 1e-6;
-  return (point - getCenter()).length2() <= r * r;
-}
-
 bool Sphere::intersect(const Ray& ray, Intersection& intersection) {
   const Vector origin = ray.origin;
   Vector direction = ray.direction;
@@ -19,7 +14,7 @@ bool Sphere::intersect(const Ray& ray, Intersection& intersection) {
 
   // Calculate the coefficients of the quadratic equation
   // au^2 + bu + c = 0. We seek the value of u for each intersection.
-  const Vector displace = origin - getCenter();
+  const Vector displace = origin - transform.translation;
   const float a = direction.dot(direction);
   const float b = 2.0 * displace.dot(direction);
   const float c = displace.dot(displace) - radius * radius;
@@ -39,7 +34,7 @@ bool Sphere::intersect(const Ray& ray, Intersection& intersection) {
     return false;
 
   const Vector pt = origin + (direction * dist);
-  Vector nml = (pt - getCenter()).normalize();
+  Vector nml = (pt - transform.translation).normalize();
 
   const float intersect_dist = (pt - ray.origin).length2();
 

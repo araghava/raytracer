@@ -9,6 +9,7 @@
 #include "../core/vector3.h"
 #include "../external/tiny_obj_loader.h"
 #include "../trace/ray.h"
+#include "../core/matrix.h"
 
 // Axis-aligned bounding box.
 class Box {
@@ -28,7 +29,7 @@ class Box {
   static Box constructFromFace(
     const std::array<tinyobj::index_t, 3>& face,
     const tinyobj::attrib_t& attrib,
-    const Vector& displace);
+    const Transform& transform);
 
   Vector lowerBound;
   Vector upperBound;

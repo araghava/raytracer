@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 #include "../texture/texture.h"
+#include "../core/matrix.h"
 #include "../core/vector3.h"
 #include "../core/color.h"
 #include "../trace/ray.h"
@@ -42,18 +43,17 @@ public:
     texture = t;
   }
 
-  Vector getCenter() const {
-    return center;
+  Transform getTransform() const {
+    return transform;
   }
 
   void setCenter(const Vector& pt) {
-    center = pt;
+    transform.translation = pt;
   }
 
 protected:
-  Vector center;
   Box bBox;
-
+  Transform transform;
   std::shared_ptr<Texture> texture;
 };
 

@@ -35,7 +35,7 @@ void Bvh::buildTree() {
 
   for (size_t i = 0; i < faces->size(); i++) {
     primitives.push_back(BvhFace(i,
-      Box::constructFromFace((*faces)[i], *attrib, objectPtr->getCenter())));
+      Box::constructFromFace((*faces)[i], *attrib, objectPtr->getTransform())));
   }
 
   // This function modifies the primitives array such that leaf BvhNodes will occupy
@@ -133,9 +133,12 @@ bool Bvh::intersectRecursive(
 // Uses Moller-Trumbore ray-triangle intersection algorithm.
 bool Bvh::rayTriangleIntersection(
   const Ray& ray, const size_t faceIdx, Intersection& intersection) {
-  Vector a = UTILgetFaceVertex((*faces)[faceIdx], *attrib, 0) + objectPtr->getCenter();
-  Vector b = UTILgetFaceVertex((*faces)[faceIdx], *attrib, 1) + objectPtr->getCenter();
-  Vector c = UTILgetFaceVertex((*faces)[faceIdx], *attrib, 2) + objectPtr->getCenter();
+  Vector a = UTILtransformVector(
+    UTILgetFaceVertex((*faces)[faceIdx], *attrib, 0), objectPtr->getTransform());
+  Vector b = UTILtransformVector(
+    UTILgetFaceVertex((*faces)[faceIdx], *attrib, 1), objectPtr->getTransform());
+  Vector c = UTILtransformVector(
+    UTILgetFaceVertex((*faces)[faceIdx], *attrib, 2), objectPtr->getTransform());
 
   std::vector<Vector> normals = {
     UTILgetFaceNormal((*faces)[faceIdx], *attrib, 0),

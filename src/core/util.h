@@ -6,6 +6,7 @@
 
 #include "../external/tiny_obj_loader.h"
 #include "vector3.h"
+#include "../objects/object.h"
 
 // Returns a random float in the range [min, max].
 extern float UTILrandomFloatBetween(const float min, const float max);
@@ -23,5 +24,8 @@ extern Vector UTILgetFaceVertex(
 
 extern Vector UTILgetFaceNormal(
   const std::array<tinyobj::index_t, 3>& face, const tinyobj::attrib_t& attrib, size_t v);
+
+extern Vector UTILtransformVector(
+  const Vector& vector, const Transform& transform);
 
 #endif

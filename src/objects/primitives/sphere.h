@@ -19,7 +19,6 @@ public:
 
   // Virtual implementations.
   virtual bool intersect(const Ray& ray, Intersection& intersection);
-  virtual bool contains(const Vector& point) const;
 
 private:
   float radius;

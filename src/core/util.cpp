@@ -31,3 +31,8 @@ Vector UTILgetFaceNormal(
     attrib.normals[3 * face[v].normal_index + 1],
     attrib.normals[3 * face[v].normal_index + 2]);
 }
+
+Vector UTILtransformVector(
+  const Vector& vector, const Transform& transform) {
+  return transform.rotation * vector + transform.translation;
+}

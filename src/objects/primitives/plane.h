@@ -20,7 +20,8 @@ public:
 
   // Virtual implementations.
   virtual bool intersect(const Ray& ray, Intersection& intersection) {
-    Vector nml = ((p2 - p1).cross(p3 - p2)).normalize();
+    auto& rot = transform.rotation;
+    Vector nml = ((rot * p2 - rot * p1).cross(rot * p3 - rot * p2)).normalize();
     if (ray.direction.dot(nml) > 0)
       nml = nml * -1;
 
@@ -50,11 +51,6 @@ public:
     intersection.finalized = true;
 
     return true;
-  }
-
-  virtual bool contains(const Vector& point) const {
-    const Vector nml = ((p2 - p1).cross(p3 - p2)).normalize();
-    return fabs((point - p1).dot(nml)) < TOLERANCE;
   }
 
 private:

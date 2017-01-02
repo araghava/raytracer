@@ -12,7 +12,8 @@
 // Holds a triangular mesh and BVH to represent a .OBJ file.
 class ObjObject : public Object {
  public:
-  ObjObject(const std::string& fn) : bvh(4), fileName(fn) {
+  ObjObject(const size_t id, const std::string& fn)
+    : Object(id), bvh(4), fileName(fn) {
   }
   virtual ~ObjObject() = default;
 

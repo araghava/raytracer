@@ -30,16 +30,6 @@ private:
   // Diffuse, specular, reflective, refractive components.
   Color computeLighting(const Intersection& intersect);
 
-  // Computes specular/diffuse contributions to an intersection from
-  // a given light.
-  Color computeDiffuse(const std::shared_ptr<Light>& light,
-                       const Intersection& intersect,
-                       float spec_contrib, float& diff_contrib,
-                       const Vector& sample_pos);
-  Color computeSpecular(const std::shared_ptr<Light>& light,
-                        const Intersection& intersect,
-                        float& spec_contrib, const Vector& sample_pos);
-
   // Computes refractive and reflective color contributions.
   Color computeRefractiveReflective(const Intersection& intersect);
 

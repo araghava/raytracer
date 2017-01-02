@@ -45,7 +45,7 @@ bool Sphere::intersect(const Ray& ray, Intersection& intersection) {
   if (direction.dot(nml) > 0)
     nml *= -1;
 
-  intersection.object = this;
+  intersection.objectId = objectId;
   intersection.pt = pt;
   intersection.nml = nml;
   intersection.ray = ray;
@@ -55,7 +55,7 @@ bool Sphere::intersect(const Ray& ray, Intersection& intersection) {
 
 int SphereLight::getNumSamples() const { return 8 * 8; }
 
-void SphereLight::sample(Vector& pos) const {
+Vector SphereLight::sample() const {
 
   Vector random_unit_vector;
 
@@ -68,5 +68,5 @@ void SphereLight::sample(Vector& pos) const {
   random_unit_vector.z = s * sin(angle);
 
   // A random point on the surface of the sphere.
-  pos = position + random_unit_vector * radius;
+  return position + random_unit_vector * radius;
 }

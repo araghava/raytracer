@@ -4,29 +4,19 @@
 #include <memory>
 #include <unordered_map>
 
-#include "../texture/texture.h"
 #include "../core/matrix.h"
 #include "../core/vector3.h"
 #include "../core/color.h"
 #include "../trace/ray.h"
 #include "../acceleration/box.h"
-
-class Object;
-
-struct Intersection {
-  Intersection(bool _f = false) : finalized(_f) {}
-
-  Ray ray;
-  Vector pt, nml;
-  Object* object;
-
-  bool finalized = false;
-};
+#include "../texture/texture.h"
 
 // Abstract Object.
 class Object {
 public:
-  Object() : texture(std::make_shared<NoopTexture>("null")) {
+  Object(const size_t objId)
+    : texture(std::make_shared<NoopTexture>("null")),
+      objectId(objId) {
   }
   virtual ~Object() = default;
 
@@ -40,6 +30,10 @@ public:
     // TODO: get UV coordinate from pt...
     const double u = 0, v = 0;
     return texture->sample(u, v);
+  }
+
+  std::shared_ptr<Texture> getTexture() const {
+    return texture;
   }
 
   void setTexture(std::shared_ptr<Texture>& t) {
@@ -58,51 +52,15 @@ public:
     transform.translation = pt;
   }
 
-  Transform transform;
+  size_t getId() const {
+    return objectId;
+  }
+
 protected:
   Box bBox;
   std::shared_ptr<Texture> texture;
-};
-
-// Abstract Light.
-class Light {
-public:
-  Light(Color c, float inten) : color(c), intensity(inten) {
-  }
-  virtual ~Light() = default;
-
-  // This gets the number of samples to use when trying to determine luminance
-  // from a light. This is needed for area lights (to create soft shadows).
-  virtual int getNumSamples() const = 0;
-
-  // Uniform random sampling on the area of this light. Fills "point" with a
-  // random
-  // point on the surface of the light object.
-  virtual void sample(Vector& point) const = 0;
-
-  void setTransform(const Transform& t) {
-    position = t.translation;
-  }
-
-  Vector position;
-  Color color;
-  float intensity;
-};
-
-class PointLight : public Light {
-public:
-  PointLight(Color c, float inten) : Light(c, inten) {
-  }
-  virtual ~PointLight() = default;
-
-  // A point light isn't an area, so we can only take one sample.
-  virtual int getNumSamples() const {
-    return 1;
-  }
-
-  virtual void sample(Vector& point) const {
-    point = position;
-  }
+  Transform transform;
+  const size_t objectId;
 };
 
 #endif

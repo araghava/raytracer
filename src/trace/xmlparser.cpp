@@ -133,17 +133,18 @@ bool XMLParser::initializeScene(tinyxml2::XMLElement* const scene) {
 bool XMLParser::initializeObject(tinyxml2::XMLElement* const object) {
   std::shared_ptr<Object> obj;
   const auto type = parseStringAttribute(object, "type");
+  const auto id = objectList.size();
 
   // create object based on type and attributes
   if (type == "sphere") {
-    obj = std::make_shared<Sphere>(parseFloatAttribute(object, "radius"));
+    obj = std::make_shared<Sphere>(id, parseFloatAttribute(object, "radius"));
   } else if (type == "plane") {
-    obj = std::make_shared<Plane>(
+    obj = std::make_shared<Plane>(id,
       parseVectorItem(object, "x1", "y1", "z1"),
       parseVectorItem(object, "x2", "y2", "z2"),
       parseVectorItem(object, "x3", "y3", "z3"));
   } else if (type == "obj") {
-    obj = std::make_shared<ObjObject>(parseStringAttribute(object, "filename"));
+    obj = std::make_shared<ObjObject>(id, parseStringAttribute(object, "filename"));
   } else {
     std::cout << "Unknown object type: " << type << std::endl;
     return false;

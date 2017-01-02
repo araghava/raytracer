@@ -11,14 +11,14 @@ bool World::getClosestIntersection(const Ray& ray, Intersection& intersect) {
   float min_dist = std::numeric_limits<float>::max();
   bool found = false;
 
-  // Check each object for intersection.
+  // check each object for intersection
   for (int i = 0; i < (int)objectList.size(); i++) {
     Intersection inter;
     if (objectList[i]->intersect(ray, inter)) {
       found = true;
       float dist = (inter.pt - ray.origin).length2();
 
-      // If this is closer, record this one.
+      // if this is closer, record this one
       if (dist < min_dist) {
         min_dist = dist;
         intersect = inter;
@@ -34,53 +34,8 @@ Color World::traceRay(const Ray& ray) {
   if (getClosestIntersection(ray, inter) && inter.finalized) {
     return computeLighting(inter);
   }
+
   return Color(0, 0, 0);
-}
-
-Color World::computeDiffuse(const std::shared_ptr<Light>& light,
-                            const Intersection& intersect,
-                            float spec_contrib, float& diff_contrib,
-                            const Vector& sample_pos) {
-  Vector pos_off = (sample_pos - intersect.pt).normalize();
-
-  // The amount this light contributes is proportional to the dot
-  // product of the relative light position and surface normal.
-  diff_contrib = intersect.nml.dot(pos_off);
-
-  // when there's specular, ignore the diffuse
-  diff_contrib *= (1 - spec_contrib);
-  if (diff_contrib >= 0.0) {
-    return light->color * light->intensity * diff_contrib;
-  }
-  return Color(0, 0, 0);
-}
-
-Color World::computeSpecular(const std::shared_ptr<Light>& light,
-                             const Intersection& intersect,
-                             float& spec_contrib, const Vector& sample_pos) {
-  Color c(0.0, 0.0, 0.0);
-
-  Vector ray_dir = (intersect.ray.origin - intersect.pt).normalize();
-  Vector pos_off = (sample_pos - intersect.pt).normalize();
-  Vector refl_vect = UTILreflectVector(pos_off, intersect.nml);
-
-  // How much specular is contributed, proportional to the dot product
-  // of the reverse incident ray direction and reflection vector.
-  spec_contrib = ray_dir.dot(refl_vect);
-  if (spec_contrib <= 0) {
-    spec_contrib = 0;
-    return c;
-  }
-
-  float shininess = 20.0;
-  spec_contrib = pow(spec_contrib, shininess) * (shininess / 100.0);
-
-  float amt = spec_contrib * light->intensity;
-  c.r += amt;
-  c.g += amt;
-  c.b += amt;
-
-  return c;
 }
 
 bool World::castShadowRay(const Vector& position,
@@ -99,8 +54,9 @@ bool World::castShadowRay(const Vector& position,
 }
 
 Color World::computeRefractiveReflective(const Intersection& intersect) {
-  if (intersect.ray.remaining_casts <= 0)
+  if (intersect.ray.remaining_casts <= 0) {
     return Color(0, 0, 0);
+  }
 
   Vector incident = intersect.pt - intersect.ray.origin;
   Ray r(intersect.pt,
@@ -111,36 +67,24 @@ Color World::computeRefractiveReflective(const Intersection& intersect) {
 }
 
 Color World::computeLighting(const Intersection& intersect) {
-  Color diffuse(0.0, 0.0, 0.0);
-  Color specular(0.0, 0.0, 0.0);
+  Color ret;
 
   for (int i = 0; i < (int)lightList.size(); i++) {
-    float spec_contrib = 0;
-    float diff_contrib = 0;
-
-    // We do uniform random sampling on the surface area of this light source,
-    // so the shadows will be soft.
-    // In real life, point lights do not exist, so we get this for free. But in
-    // computers... it's not so easy...
+    // sample the light source for soft shadows (with area lights)
     int samples = lightList[i]->getNumSamples();
+    Color curLight;
 
-    Color cur_diff(0.0, 0.0, 0.0);
-    Color cur_spec(0.0, 0.0, 0.0);
     for (int j = 0; j < samples; j++) {
-      Vector sample_pos;
-      lightList[i]->sample(sample_pos);
+      Vector sample_pos = lightList[i]->sample();
       if (!castShadowRay(sample_pos, intersect)) {
-        cur_spec +=
-            computeSpecular(lightList[i], intersect, spec_contrib, sample_pos);
-        cur_diff += computeDiffuse(lightList[i], intersect, spec_contrib,
-                                   diff_contrib, sample_pos);
+        curLight += objectList[intersect.objectId]->getTexture()->shade(
+          intersect, lightList[i], sample_pos);
       }
     }
-    cur_diff /= (1.0 * samples);
-    cur_spec /= (1.0 * samples);
-    diffuse += cur_diff * intersect.object->sampleTexture(intersect.pt);
-    specular += cur_spec;
+
+    curLight /= (1.0 * samples);
+    ret += curLight;
   }
 
-  return diffuse + specular + computeRefractiveReflective(intersect);
+  return ret + computeRefractiveReflective(intersect);
 }

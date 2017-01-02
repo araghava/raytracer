@@ -1,6 +1,7 @@
 #ifndef __SPHERE_H
 #define __SPHERE_H
 
+#include "../light.h"
 #include "../object.h"
 #include "../../core/vector3.h"
 #include "../../trace/ray.h"
@@ -8,7 +9,8 @@
 // Sphere object implementation.
 class Sphere : public Object {
 public:
-  Sphere(const float rad) : radius(rad) {
+  Sphere(const size_t id, const float rad)
+    : Object(id), radius(rad) {
   }
   virtual ~Sphere() = default;
 
@@ -36,7 +38,7 @@ public:
   virtual int getNumSamples() const;
 
   // Uniform random sampling on the surface of the sphere.
-  virtual void sample(Vector& point) const;
+  virtual Vector sample() const;
 
 private:
   float radius;

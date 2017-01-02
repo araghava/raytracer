@@ -14,8 +14,8 @@ class Plane : public Object {
 public:
   // Defines a plane by three points.
   // Make sure that no two are collinear!
-  Plane(const Vector& p1_, const Vector& p2_, const Vector& p3_)
-      : p1(p1_), p2(p2_), p3(p3_) {}
+  Plane(const size_t id, const Vector& p1_, const Vector& p2_, const Vector& p3_)
+      : Object(id), p1(p1_), p2(p2_), p3(p3_) {}
   virtual ~Plane() = default;
 
   // Virtual implementations.
@@ -44,7 +44,7 @@ public:
     if (dist >= RAY_FAR_DISTANCE)
       return false;
 
-    intersection.object = this;
+    intersection.objectId = objectId;
     intersection.ray = ray;
     intersection.pt = ray.origin + ray.direction * u;
     intersection.nml = nml;

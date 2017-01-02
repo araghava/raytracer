@@ -183,7 +183,7 @@ bool Bvh::rayTriangleIntersection(
 
         if (t > TOLERANCE && (!intersection.finalized
             || (pt - ray.origin).length2() < (intersection.pt - ray.origin).length2())) {
-          intersection.object = objectPtr;
+          intersection.objectId = objectPtr->getId();
           intersection.pt = pt;
           intersection.nml = nml;
           intersection.ray = ray;

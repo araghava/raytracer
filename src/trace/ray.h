@@ -27,4 +27,14 @@ class Ray {
   int remaining_casts;
 };
 
+struct Intersection {
+  Intersection(bool _f = false) : finalized(_f) {}
+
+  Ray ray;
+  Vector pt, nml;
+  size_t objectId;
+
+  bool finalized = false;
+};
+
 #endif

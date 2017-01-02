@@ -25,6 +25,9 @@ extern Vector UTILgetFaceVertex(
 extern Vector UTILgetFaceNormal(
   const std::array<tinyobj::index_t, 3>& face, const tinyobj::attrib_t& attrib, size_t v);
 
+extern Vector UTILgetFaceTexCoord(
+  const std::array<tinyobj::index_t, 3>& face, const tinyobj::attrib_t& attrib, size_t v);
+
 extern Vector UTILtransformVector(
   const Vector& vector, const Transform& transform);
 

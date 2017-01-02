@@ -27,6 +27,7 @@ class Bvh {
     attrib = _attrib;
     objectPtr = _oPtr;
     order.reserve(faces->size());
+    hasTexCoords = !attrib->texcoords.empty();
   }
 
   // Builds a binary tree of std::shared_ptr<BvhNode> and sets the root.
@@ -72,6 +73,7 @@ class Bvh {
   std::shared_ptr<BvhNode> root;
 
   Object* objectPtr;
+  bool hasTexCoords;
 };
 
 // Struct representing a triangular face in the BVH.

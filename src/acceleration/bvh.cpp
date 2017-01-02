@@ -140,12 +140,6 @@ bool Bvh::rayTriangleIntersection(
   Vector c = UTILtransformVector(
     UTILgetFaceVertex((*faces)[faceIdx], *attrib, 2), objectPtr->getTransform());
 
-  std::vector<Vector> normals = {
-    UTILgetFaceNormal((*faces)[faceIdx], *attrib, 0),
-    UTILgetFaceNormal((*faces)[faceIdx], *attrib, 1),
-    UTILgetFaceNormal((*faces)[faceIdx], *attrib, 2)
-  };
-
   Vector e1 = b - a, e2 = c - a;
   Vector D = ray.direction;
   D.normalize();
@@ -175,17 +169,29 @@ bool Bvh::rayTriangleIntersection(
         u /= determ;
         v /= determ;
         float t = (e2.dot(Q)) / determ;
-
-        // barycentric coordinate vector on the face
-        Vector bc = Vector(1.0 - u - v, u, v);
-        Vector nml = UTILinterpolateFace(normals, bc);
         Vector pt = ray.origin + (D * t);
 
         if (t > TOLERANCE && (!intersection.finalized
             || (pt - ray.origin).length2() < (intersection.pt - ray.origin).length2())) {
           intersection.objectId = objectPtr->getId();
           intersection.pt = pt;
-          intersection.nml = nml;
+
+          // barycentric coordinate vector on the face
+          Vector bc = Vector(1.0 - u - v, u, v);
+          if (hasTexCoords) {
+            std::vector<Vector> texCoords = {
+              UTILgetFaceTexCoord((*faces)[faceIdx], *attrib, 0),
+              UTILgetFaceTexCoord((*faces)[faceIdx], *attrib, 1),
+              UTILgetFaceTexCoord((*faces)[faceIdx], *attrib, 2),
+            };
+            intersection.texCoord = UTILinterpolateFace(texCoords, bc);
+          }
+          std::vector<Vector> normals = {
+            UTILgetFaceNormal((*faces)[faceIdx], *attrib, 0),
+            UTILgetFaceNormal((*faces)[faceIdx], *attrib, 1),
+            UTILgetFaceNormal((*faces)[faceIdx], *attrib, 2)
+          };
+          intersection.nml = UTILinterpolateFace(normals, bc);
           intersection.ray = ray;
           intersection.finalized = true;
 

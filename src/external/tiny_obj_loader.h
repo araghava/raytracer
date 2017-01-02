@@ -268,7 +268,7 @@ class MaterialReader {
 class MaterialFileReader : public MaterialReader {
  public:
   explicit MaterialFileReader(const std::string &mtl_basedir)
-      : m_mtlBaseDir(mtl_basedir) {} 
+      : m_mtlBaseDir(mtl_basedir) {}
   virtual ~MaterialFileReader() {}
   virtual bool operator()(const std::string &matId,
                           std::vector<material_t> *materials,
@@ -1514,7 +1514,7 @@ bool LoadObj(attrib_t *attrib, std::vector<shape_t> *shapes,
 
             std::string err_mtl;
             bool ok = (*readMatFn)(filenames[s].c_str(), materials, &material_map, &err_mtl);
-            if (err && (!err_mtl.empty())) { 
+            if (err && (!err_mtl.empty())) {
               (*err) += err_mtl; // This should be warn message.
             }
 
@@ -1525,7 +1525,7 @@ bool LoadObj(attrib_t *attrib, std::vector<shape_t> *shapes,
           }
 
           if (!found) {
-            if (err) { 
+            if (err) {
               (*err) += "WARN: Failed to load material file(s). Use default material.\n";
             }
           }
@@ -1821,7 +1821,7 @@ bool LoadObjWithCallback(std::istream &inStream, const callback_t &callback,
 
             std::string err_mtl;
             bool ok = (*readMatFn)(filenames[s].c_str(), &materials, &material_map, &err_mtl);
-            if (err && (!err_mtl.empty())) { 
+            if (err && (!err_mtl.empty())) {
               (*err) += err_mtl; // This should be warn message.
             }
 
@@ -1832,7 +1832,7 @@ bool LoadObjWithCallback(std::istream &inStream, const callback_t &callback,
           }
 
           if (!found) {
-            if (err) { 
+            if (err) {
               (*err) += "WARN: Failed to load material file(s). Use default material.\n";
             }
           } else {

@@ -40,6 +40,6 @@
     <position x="0" y="0" z="0" />
     <direction x="0" y="0" z="-1" />
     <up x="0" y="0" z="1" />
-    <resolution width="128" height="128" antialias="2" />
+    <resolution width="128" height="128" antialias="1" />
   </camera>
 </xml>

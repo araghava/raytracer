@@ -31,7 +31,7 @@ struct Intersection {
   Intersection(bool _f = false) : finalized(_f) {}
 
   Ray ray;
-  Vector pt, nml;
+  Vector pt, nml, texCoord;
   size_t objectId;
 
   bool finalized = false;

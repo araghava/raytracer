@@ -16,7 +16,6 @@ public:
   Material(const std::string& s) : id(s) {}
   virtual ~Material() = default;
 
-  virtual Color sample(const double i, const double j) const = 0;
   virtual Color shade(
     const Intersection& inter,
     std::shared_ptr<Light>& light,
@@ -34,23 +33,10 @@ public:
   SolidMaterial(const std::string id, const Color c)
     : Material(id), color(c) {}
 
-  virtual Color sample(const double i, const double j) const {
-    return color;
-  }
-
   virtual Color shade(
       const Intersection& inter,
       std::shared_ptr<Light>& light,
-      const Vector& lightSamplePos) const {
-    // The amount this light contributes is proportional to the dot
-    // product of the relative light position and surface normal.
-    Vector pos_off = (lightSamplePos - inter.pt).normalize();
-    float diff_contrib = inter.nml.dot(pos_off);
-    if (diff_contrib > 0.0) {
-      return color * light->color * light->intensity * diff_contrib;
-    }
-    return Color(0, 0, 0);
-  }
+      const Vector& lightSamplePos) const;
 
 private:
   Color color;

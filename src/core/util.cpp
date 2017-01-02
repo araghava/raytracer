@@ -32,6 +32,13 @@ Vector UTILgetFaceNormal(
     attrib.normals[3 * face[v].normal_index + 2]);
 }
 
+Vector UTILgetFaceTexCoord(
+  const std::array<tinyobj::index_t, 3>& face, const tinyobj::attrib_t& attrib, size_t v) {
+  return Vector(
+    attrib.texcoords[2 * face[v].texcoord_index + 0],
+    attrib.texcoords[2 * face[v].texcoord_index + 1], 0);
+}
+
 Vector UTILtransformVector(
   const Vector& vector, const Transform& transform) {
   return transform.rotation * (vector * transform.scale) + transform.translation;

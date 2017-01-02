@@ -77,7 +77,7 @@ Color World::computeLighting(const Intersection& intersect) {
     for (int j = 0; j < samples; j++) {
       Vector sample_pos = lightList[i]->sample();
       if (!castShadowRay(sample_pos, intersect)) {
-        curLight += objectList[intersect.objectId]->getTexture()->shade(
+        curLight += objectList[intersect.objectId]->getMaterial()->shade(
           intersect, lightList[i], sample_pos);
       }
     }

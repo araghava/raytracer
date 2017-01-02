@@ -13,7 +13,7 @@ DEPS = acceleration/box.o \
   core/util.o \
 	objects/objobject.o \
 	objects/primitives/sphere.o \
-	texture/texture.o \
+	material/material.o \
 	trace/screen.o \
 	trace/world.o \
 	trace/raytracer.o \
@@ -35,8 +35,8 @@ core/constants.o: core/constants.cpp core/constants.h
 	$(CC) $(CFLAGS) -c core/constants.cpp -o core/constants.o
 core/util.o: core/util.cpp core/util.h
 	$(CC) $(CFLAGS) -c core/util.cpp -o core/util.o
-texture/texture.o: texture/texture.cpp texture/texture.h
-	$(CC) $(CFLAGS) -c texture/texture.cpp -o texture/texture.o
+material/material.o: material/material.cpp material/material.h
+	$(CC) $(CFLAGS) -c material/material.cpp -o material/material.o
 trace/screen.o: trace/screen.cpp trace/screen.h
 	$(CC) $(CFLAGS) -c trace/screen.cpp -o trace/screen.o
 trace/raytracer.o: trace/raytracer.cpp trace/raytracer.h

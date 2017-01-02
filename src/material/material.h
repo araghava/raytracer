@@ -1,5 +1,5 @@
-#ifndef __TEXTURE_H
-#define __TEXTURE_H
+#ifndef __MATERIAL_H
+#define __MATERIAL_H
 
 #include <memory>
 #include <string>
@@ -10,11 +10,11 @@
 #include "../objects/light.h"
 #include "../trace/ray.h"
 
-// Texture applicable to objects
-class Texture {
+// Material applicable to objects
+class Material {
 public:
-  Texture(const std::string& s) : id(s) {}
-  virtual ~Texture() = default;
+  Material(const std::string& s) : id(s) {}
+  virtual ~Material() = default;
 
   virtual Color sample(const double i, const double j) const = 0;
   virtual Color shade(
@@ -28,11 +28,11 @@ private:
   std::string id;
 };
 
-// Solid color texture.
-class SolidTexture : public Texture {
+// Solid color material.
+class SolidMaterial : public Material {
 public:
-  SolidTexture(const std::string id, const Color c)
-    : Texture(id), color(c) {}
+  SolidMaterial(const std::string id, const Color c)
+    : Material(id), color(c) {}
 
   virtual Color sample(const double i, const double j) const {
     return color;
@@ -56,9 +56,9 @@ private:
   Color color;
 };
 
-class NoopTexture : public SolidTexture {
+class NoopMaterial : public SolidMaterial {
 public:
-  NoopTexture(const std::string id) : SolidTexture(id, Color(1, 1, 1)) {}
+  NoopMaterial(const std::string id) : SolidMaterial(id, Color(1, 1, 1)) {}
 };
 
 #endif

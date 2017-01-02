@@ -75,8 +75,8 @@ bool XMLParser::parse() {
   for (size_t i = 0; i < objectList.size(); i++) {
     objectList[i]->load();
 
-    if (objectTextureMap.count(i)) {
-      objectList[i]->setTexture(textureMap[objectTextureMap[i]]);
+    if (objectMaterialMap.count(i)) {
+      objectList[i]->setMaterial(materialMap[objectMaterialMap[i]]);
     }
     tracer->addObject(objectList[i]);
   }
@@ -122,8 +122,8 @@ bool XMLParser::initializeScene(tinyxml2::XMLElement* const scene) {
       PARSE_ERROR("Unable to initialize object");
     } else if (item == "light" && !initializeLight(child)) {
       PARSE_ERROR("Unable to initialize light");
-    } else if (item == "texture" && !initializeTexture(child)) {
-      PARSE_ERROR("Unable to initialize texture");
+    } else if (item == "material" && !initializeMaterial(child)) {
+      PARSE_ERROR("Unable to initialize material");
     }
     child = child->NextSiblingElement();
   }
@@ -173,9 +173,9 @@ bool XMLParser::initializeObject(tinyxml2::XMLElement* const object) {
   }
 
   // set the material
-  std::string materialName = parseStringAttribute(object, "texture");
+  std::string materialName = parseStringAttribute(object, "material");
   if (!materialName.empty()) {
-    objectTextureMap[objectList.size()] = materialName;
+    objectMaterialMap[objectList.size()] = materialName;
   }
   obj->setTransform(transform);
   objectList.push_back(obj);
@@ -238,17 +238,17 @@ bool XMLParser::initializeLight(tinyxml2::XMLElement* const light) {
   return true;
 }
 
-bool XMLParser::initializeTexture(tinyxml2::XMLElement* const texture) {
-  const auto name = parseStringAttribute(texture, "name");
+bool XMLParser::initializeMaterial(tinyxml2::XMLElement* const material) {
+  const auto name = parseStringAttribute(material, "name");
 
-  auto* child = texture->FirstChildElement();
+  auto* child = material->FirstChildElement();
   while (child) {
     const auto& item = std::string(child->Value());
     if (item == "diffuse") {
-      textureMap[name] = std::make_shared<SolidTexture>(
+      materialMap[name] = std::make_shared<SolidMaterial>(
         name, Color(parseVectorItem(child, "r", "g", "b")));
     } else {
-      PARSE_ERROR("Unknown texture field: " << item);
+      PARSE_ERROR("Unknown material field: " << item);
     }
     child = child->NextSiblingElement();
   }

@@ -9,13 +9,13 @@
 #include "../core/color.h"
 #include "../trace/ray.h"
 #include "../acceleration/box.h"
-#include "../texture/texture.h"
+#include "../material/material.h"
 
 // Abstract Object.
 class Object {
 public:
   Object(const size_t objId)
-    : texture(std::make_shared<NoopTexture>("null")),
+    : material(std::make_shared<NoopMaterial>("null")),
       objectId(objId) {
   }
   virtual ~Object() = default;
@@ -26,18 +26,12 @@ public:
     return true;
   }
 
-  virtual Color sampleTexture(const Vector& pt) {
-    // TODO: get UV coordinate from pt...
-    const double u = 0, v = 0;
-    return texture->sample(u, v);
+  std::shared_ptr<Material> getMaterial() const {
+    return material;
   }
 
-  std::shared_ptr<Texture> getTexture() const {
-    return texture;
-  }
-
-  void setTexture(std::shared_ptr<Texture>& t) {
-    texture = t;
+  void setMaterial(std::shared_ptr<Material>& t) {
+    material = t;
   }
 
   void setTransform(const Transform& t) {
@@ -58,7 +52,7 @@ public:
 
 protected:
   Box bBox;
-  std::shared_ptr<Texture> texture;
+  std::shared_ptr<Material> material;
   Transform transform;
   const size_t objectId;
 };

@@ -2,7 +2,7 @@
 #define __RAY_H_
 
 #include "../core/constants.h"
-#include "../core/vector3.h"
+#include "../core/geometry.h"
 
 class Ray {
  public:

@@ -3,7 +3,7 @@
 
 #include "../object.h"
 
-#include "../../core/vector3.h"
+#include "../../core/geometry.h"
 #include "../../core/constants.h"
 #include "../../trace/ray.h"
 

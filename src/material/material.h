@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include "../core/vector3.h"
+#include "../core/geometry.h"
 #include "../core/color.h"
 #include "../objects/light.h"
 #include "../trace/ray.h"

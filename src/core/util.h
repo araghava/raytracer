@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "../external/tiny_obj_loader.h"
-#include "vector3.h"
+#include "geometry.h"
 #include "../objects/object.h"
 
 // Returns a random float in the range [min, max].

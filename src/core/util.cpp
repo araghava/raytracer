@@ -1,6 +1,6 @@
 #include "util.h"
 #include <cstdlib>
-#include "vector3.h"
+#include "geometry.h"
 
 float UTILrandomFloatBetween(float min, float max) {
   const float r = ((float)rand()) / (float)RAND_MAX;

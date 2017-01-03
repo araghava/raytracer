@@ -3,7 +3,7 @@
 
 #include "../light.h"
 #include "../object.h"
-#include "../../core/vector3.h"
+#include "../../core/geometry.h"
 #include "../../trace/ray.h"
 
 // Sphere object implementation.

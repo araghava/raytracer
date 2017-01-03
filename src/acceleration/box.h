@@ -6,7 +6,7 @@
 
 #include <math.h>
 #include <float.h>
-#include "../core/vector3.h"
+#include "../core/geometry.h"
 #include "../external/tiny_obj_loader.h"
 #include "../trace/ray.h"
 #include "../core/matrix.h"

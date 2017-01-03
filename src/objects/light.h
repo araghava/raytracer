@@ -3,7 +3,7 @@
 
 #include "../core/color.h"
 #include "../core/matrix.h"
-#include "../core/vector3.h"
+#include "../core/geometry.h"
 
 // Abstract Light.
 class Light {

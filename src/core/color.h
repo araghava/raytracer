@@ -1,7 +1,7 @@
 #ifndef __COLOR_H_
 #define __COLOR_H_
 
-#include "vector3.h"
+#include "geometry.h"
 
 // Utility color class.
 class Color {

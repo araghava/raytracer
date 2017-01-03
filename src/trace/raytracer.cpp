@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "../core/vector3.h"
+#include "../core/geometry.h"
 #include "../core/color.h"
 #include "../core/constants.h"
 

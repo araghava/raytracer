@@ -5,7 +5,7 @@
 #include <unordered_map>
 
 #include "../core/matrix.h"
-#include "../core/vector3.h"
+#include "../core/geometry.h"
 #include "../core/color.h"
 #include "../trace/ray.h"
 #include "../acceleration/box.h"

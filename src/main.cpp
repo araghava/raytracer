@@ -8,7 +8,6 @@
 
 #include "trace/xmlparser.h"
 #include "trace/raytracer.h"
-#include "core/matrix.h"
 
 namespace {
   const std::string DEFAULT_IMAGE_OUT = "../images/out.tga";

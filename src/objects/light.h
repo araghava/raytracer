@@ -2,7 +2,7 @@
 #define __LIGHT_H
 
 #include "../core/color.h"
-#include "../core/matrix.h"
+#include "../core/transform.h"
 #include "../core/geometry.h"
 
 // Abstract Light.

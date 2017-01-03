@@ -4,7 +4,7 @@
 #include <memory>
 #include <unordered_map>
 
-#include "../core/matrix.h"
+#include "../core/transform.h"
 #include "../core/geometry.h"
 #include "../core/color.h"
 #include "../trace/ray.h"

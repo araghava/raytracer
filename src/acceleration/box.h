@@ -9,7 +9,7 @@
 #include "../core/geometry.h"
 #include "../external/tiny_obj_loader.h"
 #include "../trace/ray.h"
-#include "../core/matrix.h"
+#include "../core/transform.h"
 
 // Axis-aligned bounding box.
 class Box {

@@ -1,5 +1,5 @@
-#ifndef __MATRIX_H_
-#define __MATRIX_H_
+#ifndef __TRANSFORM_H_
+#define __TRANSFORM_H_
 
 #include "geometry.h"
 
@@ -75,10 +75,21 @@ class Transform2 {
   Matrix4 getMatrix() const;
   Matrix4 getInverseMatrix() const;
 
-  inline Vector operator()(const Vector& v) const;
+  Transform2 operator*(const Transform2& o) const;
+  inline Vector applyPoint(const Vector& p) const;
+  inline Vector applyVector(const Vector& v) const;
+
+  static Transform2 translate(const Vector& delta);
+  static Transform2 scale(float x, float y, float z);
+  static Transform2 rotateX(float theta);
+  static Transform2 rotateY(float theta);
+  static Transform2 rotateZ(float theta);
+  static Transform2 rotate(float theta, const Vector& axis);
+  static Transform2 lookAt(const Vector& pos, const Vector& look, const Vector& up);
+  static Transform2 perspective(float fov, float znear, float zfar);
+
  private:
   Matrix4 m, mInv;
 };
-
 
 #endif

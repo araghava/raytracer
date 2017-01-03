@@ -7,7 +7,7 @@ all: $(TARGET)
 
 DEPS = acceleration/box.o \
   acceleration/bvh.o \
-  core/matrix.o \
+  core/transform.o \
   core/geometry.o \
   core/constants.o \
   core/util.o \
@@ -27,8 +27,8 @@ acceleration/box.o: acceleration/box.cpp acceleration/box.h
 	$(CC) $(CFLAGS) -c acceleration/box.cpp -o acceleration/box.o
 acceleration/bvh.o: acceleration/bvh.cpp acceleration/bvh.h
 	$(CC) $(CFLAGS) -c acceleration/bvh.cpp -o acceleration/bvh.o
-core/matrix.o: core/matrix.cpp core/matrix.h
-	$(CC) $(CFLAGS) -c core/matrix.cpp -o core/matrix.o
+core/transform.o: core/transform.cpp core/transform.h
+	$(CC) $(CFLAGS) -c core/transform.cpp -o core/transform.o
 core/geometry.o: core/geometry.cpp core/geometry.h
 	$(CC) $(CFLAGS) -c core/geometry.cpp -o core/geometry.o
 core/constants.o: core/constants.cpp core/constants.h

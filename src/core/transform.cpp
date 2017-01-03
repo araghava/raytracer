@@ -1,4 +1,4 @@
-#include "matrix.h"
+#include "transform.h"
 
 #include <math.h>
 #include <string.h>
@@ -310,10 +310,141 @@ Matrix4 Transform2::getInverseMatrix() const {
   return mInv;
 }
 
-inline Vector Transform2::operator()(const Vector& v) const {
+// apply transformation as a point (translation + rotation)
+inline Vector Transform2::applyPoint(const Vector& p) const {
+  float x = p.x, y = p.y, z = p.z;
+  float xp = m.m[0][0] * x + m.m[0][1] * y + m.m[0][2] * z + m.m[0][3];
+  float yp = m.m[1][0] * x + m.m[1][1] * y + m.m[1][2] * z + m.m[1][3];
+  float zp = m.m[2][0] * x + m.m[2][1] * y + m.m[2][2] * z + m.m[2][3];
+  float wp = m.m[3][0] * x + m.m[3][1] * y + m.m[3][2] * z + m.m[3][3];
+  return wp == 1 ? Vector(xp, yp, zp) : Vector(xp, yp, zp) / wp;
+}
+
+// apply transformation as vector (rotation only)
+inline Vector Transform2::applyVector(const Vector& v) const {
   float x = v.x, y = v.y, z = v.z;
   return Vector(
     m.m[0][0] * x + m.m[0][1] * y + m.m[0][2] * z,
     m.m[1][0] * x + m.m[1][1] * y + m.m[1][2] * z,
     m.m[2][0] * x + m.m[2][1] * y + m.m[2][2] * z);
+}
+
+Transform2 Transform2::translate(const Vector& delta) {
+  Matrix4 m(
+    1, 0, 0, delta.x,
+    0, 1, 0, delta.y,
+    0, 0, 1, delta.z,
+    0, 0, 0, 1);
+  Matrix4 minv(1, 0, 0, -delta.x,
+               0, 1, 0, -delta.y,
+               0, 0, 1, -delta.z,
+               0, 0, 0, 1);
+  return Transform2(m, minv);
+}
+
+Transform2 Transform2::scale(float x, float y, float z) {
+  Matrix4 m(x, 0, 0, 0, 0, y, 0, 0, 0, 0, z, 0, 0, 0, 0, 1);
+  Matrix4 minv(1 / x, 0, 0, 0, 0, 1 / y, 0, 0, 0, 0, 1 / z, 0, 0, 0, 0, 1);
+  return Transform2(m, minv);
+}
+
+Transform2 Transform2::rotateX(float theta) {
+  float sinTheta = sin(theta * M_PI / 180.0);
+  float cosTheta = cos(theta * M_PI / 180.0);
+  Matrix4 m(
+    1, 0, 0, 0,
+    0, cosTheta, -sinTheta, 0,
+    0, sinTheta, cosTheta, 0,
+    0, 0, 0, 1);
+  return Transform2(m, MatrixTranspose(m));
+}
+
+Transform2 Transform2::rotateY(float theta) {
+  float sinTheta = sin(theta * M_PI / 180.0);
+  float cosTheta = cos(theta * M_PI / 180.0);
+  Matrix4 m(cosTheta, 0, sinTheta, 0,
+            0, 1, 0, 0,
+            -sinTheta, 0, cosTheta, 0,
+            0, 0, 0, 1);
+  return Transform2(m, MatrixTranspose(m));
+}
+
+Transform2 Transform2::rotateZ(float theta) {
+  float sinTheta = sin(theta * M_PI / 180.0);
+  float cosTheta = cos(theta * M_PI / 180.0);
+  Matrix4 m(cosTheta, -sinTheta, 0, 0,
+            sinTheta, cosTheta, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1);
+  return Transform2(m, MatrixTranspose(m));
+}
+
+Transform2 Transform2::rotate(float theta, const Vector& a) {
+  float sinTheta = sin(theta * M_PI / 180.0);
+  float cosTheta = cos(theta * M_PI / 180.0);
+  Matrix4 m;
+
+  // compute rotation of first basis vector
+  m.m[0][0] = a.x * a.x + (1 - a.x * a.x) * cosTheta;
+  m.m[0][1] = a.x * a.y * (1 - cosTheta) - a.z * sinTheta;
+  m.m[0][2] = a.x * a.z * (1 - cosTheta) + a.y * sinTheta;
+  m.m[0][3] = 0;
+
+  // compute rotations of second and third basis vectors
+  m.m[1][0] = a.x * a.y * (1 - cosTheta) + a.z * sinTheta;
+  m.m[1][1] = a.y * a.y + (1 - a.y * a.y) * cosTheta;
+  m.m[1][2] = a.y * a.z * (1 - cosTheta) - a.x * sinTheta;
+  m.m[1][3] = 0;
+
+  m.m[2][0] = a.x * a.z * (1 - cosTheta) - a.y * sinTheta;
+  m.m[2][1] = a.y * a.z * (1 - cosTheta) + a.x * sinTheta;
+  m.m[2][2] = a.z * a.z + (1 - a.z * a.z) * cosTheta;
+  m.m[2][3] = 0;
+  return Transform2(m, MatrixTranspose(m));
+}
+
+Transform2 Transform2::lookAt(const Vector& pos, const Vector& look, const Vector& up) {
+  Matrix4 cameraToWorld;
+
+  // initialize fourth column of viewing matrix
+  cameraToWorld.m[0][3] = pos.x;
+  cameraToWorld.m[1][3] = pos.y;
+  cameraToWorld.m[2][3] = pos.z;
+  cameraToWorld.m[3][3] = 1;
+
+  // initialize first three columns of viewing matrix
+  Vector dir = (look - pos).normalize();
+  if ((up.cross(dir)).length() == 0) {
+    return Transform2();
+  }
+
+  Vector left = (up.cross(dir)).normalize();
+  Vector newUp = dir.cross(left);
+  cameraToWorld.m[0][0] = left.x;
+  cameraToWorld.m[1][0] = left.y;
+  cameraToWorld.m[2][0] = left.z;
+  cameraToWorld.m[3][0] = 0.;
+  cameraToWorld.m[0][1] = newUp.x;
+  cameraToWorld.m[1][1] = newUp.y;
+  cameraToWorld.m[2][1] = newUp.z;
+  cameraToWorld.m[3][1] = 0.;
+  cameraToWorld.m[0][2] = dir.x;
+  cameraToWorld.m[1][2] = dir.y;
+  cameraToWorld.m[2][2] = dir.z;
+  cameraToWorld.m[3][2] = 0.;
+  return Transform2(MatrixInvert(cameraToWorld), cameraToWorld);
+}
+
+Transform2 Transform2::perspective(float fov, float n, float f) {
+  // perform projective divide for perspective projection
+  Matrix4 persp(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, f / (f - n), -f * n / (f - n),
+                0, 0, 1, 0);
+
+  // scale canonical perspective view to specified field of view
+  float invTanAng = 1 / tan(fov * M_PI / (180.0 * 2));
+  return scale(invTanAng, invTanAng, 1) * Transform2(persp);
+}
+
+Transform2 Transform2::operator*(const Transform2& o) const {
+  return Transform2(Matrix4::multiply(m, o.m), Matrix4::multiply(o.mInv, mInv));
 }

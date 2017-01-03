@@ -45,38 +45,4 @@ public:
   friend std::ostream& operator<<(std::ostream& o, const Vector &a);
 };
 
-// Utility 3-D point class. We differentiate this from vector as translation
-// of a vector is meaningless in our case.
-class Point {
-public:
-  float x, y, z;
-
-  Point() : x(0.), y(0.), z(0.) {}
-  Point(float f) : x(f), y(f), z(f) {}
-  Point(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
-
-  // Common operator overrides.
-  Point operator+(const Point& v) const;
-  Point &operator+=(const Point& v);
-
-  Point operator-(const Point& v) const;
-  Point &operator-=(const Point& v);
-
-  Point operator*(const Point& v) const;
-  Point &operator*=(const Point& v);
-
-  Point operator/(const Point& v) const;
-  Point &operator/=(const Point& v);
-
-  Point operator*(float scale) const;
-  Point &operator*=(float scale);
-
-  Point operator/(float scale) const;
-  Point &operator/=(float scale);
-
-  float operator[](size_t idx) const;
-
-  friend std::ostream& operator<<(std::ostream& o, const Point &a);
-};
-
 #endif

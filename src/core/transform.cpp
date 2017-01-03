@@ -267,7 +267,7 @@ Matrix4 Matrix4::multiply(const Matrix4& m1, const Matrix4& m2) {
   return ret;
 }
 
-Transform2::Transform2(const float mat[4][4]) {
+Transform::Transform(const float mat[4][4]) {
   m = Matrix4(
     mat[0][0], mat[0][1], mat[0][2], mat[0][3],
     mat[1][0], mat[1][1], mat[1][2], mat[1][3],
@@ -276,42 +276,42 @@ Transform2::Transform2(const float mat[4][4]) {
   mInv = MatrixInvert(m);
 }
 
-Transform2::Transform2(const Matrix4& mat) {
+Transform::Transform(const Matrix4& mat) {
   m = mat;
   mInv = MatrixInvert(mat);
 }
 
-Transform2::Transform2(const Matrix4& mat, const Matrix4& inv) {
+Transform::Transform(const Matrix4& mat, const Matrix4& inv) {
   m = mat;
   mInv = inv;
 }
 
-Transform2 Transform2Inverse(const Transform2& t) {
-  return Transform2(t.mInv, t.m);
+Transform TransformInverse(const Transform& t) {
+  return Transform(t.mInv, t.m);
 }
 
-Transform2 Transform2Transpose(const Transform2& t) {
-  return Transform2(MatrixTranspose(t.m), MatrixTranspose(t.mInv));
+Transform TransformTranspose(const Transform& t) {
+  return Transform(MatrixTranspose(t.m), MatrixTranspose(t.mInv));
 }
 
-bool Transform2::operator==(const Transform2& t) const {
+bool Transform::operator==(const Transform& t) const {
   return t.m == m && t.mInv == mInv;
 }
 
-bool Transform2::operator!=(const Transform2& t) const {
+bool Transform::operator!=(const Transform& t) const {
   return t.m != m || t.mInv != t.mInv;
 }
 
-Matrix4 Transform2::getMatrix() const {
+Matrix4 Transform::getMatrix() const {
   return m;
 }
 
-Matrix4 Transform2::getInverseMatrix() const {
+Matrix4 Transform::getInverseMatrix() const {
   return mInv;
 }
 
 // apply transformation as a point (translation + rotation)
-inline Vector Transform2::applyPoint(const Vector& p) const {
+Vector Transform::applyPoint(const Vector& p) const {
   float x = p.x, y = p.y, z = p.z;
   float xp = m.m[0][0] * x + m.m[0][1] * y + m.m[0][2] * z + m.m[0][3];
   float yp = m.m[1][0] * x + m.m[1][1] * y + m.m[1][2] * z + m.m[1][3];
@@ -321,7 +321,7 @@ inline Vector Transform2::applyPoint(const Vector& p) const {
 }
 
 // apply transformation as vector (rotation only)
-inline Vector Transform2::applyVector(const Vector& v) const {
+Vector Transform::applyVector(const Vector& v) const {
   float x = v.x, y = v.y, z = v.z;
   return Vector(
     m.m[0][0] * x + m.m[0][1] * y + m.m[0][2] * z,
@@ -329,7 +329,7 @@ inline Vector Transform2::applyVector(const Vector& v) const {
     m.m[2][0] * x + m.m[2][1] * y + m.m[2][2] * z);
 }
 
-Transform2 Transform2::translate(const Vector& delta) {
+Transform Transform::translate(const Vector& delta) {
   Matrix4 m(
     1, 0, 0, delta.x,
     0, 1, 0, delta.y,
@@ -339,16 +339,16 @@ Transform2 Transform2::translate(const Vector& delta) {
                0, 1, 0, -delta.y,
                0, 0, 1, -delta.z,
                0, 0, 0, 1);
-  return Transform2(m, minv);
+  return Transform(m, minv);
 }
 
-Transform2 Transform2::scale(float x, float y, float z) {
+Transform Transform::scale(float x, float y, float z) {
   Matrix4 m(x, 0, 0, 0, 0, y, 0, 0, 0, 0, z, 0, 0, 0, 0, 1);
   Matrix4 minv(1 / x, 0, 0, 0, 0, 1 / y, 0, 0, 0, 0, 1 / z, 0, 0, 0, 0, 1);
-  return Transform2(m, minv);
+  return Transform(m, minv);
 }
 
-Transform2 Transform2::rotateX(float theta) {
+Transform Transform::rotateX(float theta) {
   float sinTheta = sin(theta * M_PI / 180.0);
   float cosTheta = cos(theta * M_PI / 180.0);
   Matrix4 m(
@@ -356,30 +356,30 @@ Transform2 Transform2::rotateX(float theta) {
     0, cosTheta, -sinTheta, 0,
     0, sinTheta, cosTheta, 0,
     0, 0, 0, 1);
-  return Transform2(m, MatrixTranspose(m));
+  return Transform(m, MatrixTranspose(m));
 }
 
-Transform2 Transform2::rotateY(float theta) {
+Transform Transform::rotateY(float theta) {
   float sinTheta = sin(theta * M_PI / 180.0);
   float cosTheta = cos(theta * M_PI / 180.0);
   Matrix4 m(cosTheta, 0, sinTheta, 0,
             0, 1, 0, 0,
             -sinTheta, 0, cosTheta, 0,
             0, 0, 0, 1);
-  return Transform2(m, MatrixTranspose(m));
+  return Transform(m, MatrixTranspose(m));
 }
 
-Transform2 Transform2::rotateZ(float theta) {
+Transform Transform::rotateZ(float theta) {
   float sinTheta = sin(theta * M_PI / 180.0);
   float cosTheta = cos(theta * M_PI / 180.0);
   Matrix4 m(cosTheta, -sinTheta, 0, 0,
             sinTheta, cosTheta, 0, 0,
             0, 0, 1, 0,
             0, 0, 0, 1);
-  return Transform2(m, MatrixTranspose(m));
+  return Transform(m, MatrixTranspose(m));
 }
 
-Transform2 Transform2::rotate(float theta, const Vector& a) {
+Transform Transform::rotate(float theta, const Vector& a) {
   float sinTheta = sin(theta * M_PI / 180.0);
   float cosTheta = cos(theta * M_PI / 180.0);
   Matrix4 m;
@@ -400,10 +400,10 @@ Transform2 Transform2::rotate(float theta, const Vector& a) {
   m.m[2][1] = a.y * a.z * (1 - cosTheta) + a.x * sinTheta;
   m.m[2][2] = a.z * a.z + (1 - a.z * a.z) * cosTheta;
   m.m[2][3] = 0;
-  return Transform2(m, MatrixTranspose(m));
+  return Transform(m, MatrixTranspose(m));
 }
 
-Transform2 Transform2::lookAt(const Vector& pos, const Vector& look, const Vector& up) {
+Transform Transform::lookAt(const Vector& pos, const Vector& look, const Vector& up) {
   Matrix4 cameraToWorld;
 
   // initialize fourth column of viewing matrix
@@ -415,7 +415,7 @@ Transform2 Transform2::lookAt(const Vector& pos, const Vector& look, const Vecto
   // initialize first three columns of viewing matrix
   Vector dir = (look - pos).normalize();
   if ((up.cross(dir)).length() == 0) {
-    return Transform2();
+    return Transform();
   }
 
   Vector left = (up.cross(dir)).normalize();
@@ -432,19 +432,19 @@ Transform2 Transform2::lookAt(const Vector& pos, const Vector& look, const Vecto
   cameraToWorld.m[1][2] = dir.y;
   cameraToWorld.m[2][2] = dir.z;
   cameraToWorld.m[3][2] = 0.;
-  return Transform2(MatrixInvert(cameraToWorld), cameraToWorld);
+  return Transform(MatrixInvert(cameraToWorld), cameraToWorld);
 }
 
-Transform2 Transform2::perspective(float fov, float n, float f) {
+Transform Transform::perspective(float fov, float n, float f) {
   // perform projective divide for perspective projection
   Matrix4 persp(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, f / (f - n), -f * n / (f - n),
                 0, 0, 1, 0);
 
   // scale canonical perspective view to specified field of view
   float invTanAng = 1 / tan(fov * M_PI / (180.0 * 2));
-  return scale(invTanAng, invTanAng, 1) * Transform2(persp);
+  return scale(invTanAng, invTanAng, 1) * Transform(persp);
 }
 
-Transform2 Transform2::operator*(const Transform2& o) const {
-  return Transform2(Matrix4::multiply(m, o.m), Matrix4::multiply(o.mInv, mInv));
+Transform Transform::operator*(const Transform& o) const {
+  return Transform(Matrix4::multiply(m, o.m), Matrix4::multiply(o.mInv, mInv));
 }

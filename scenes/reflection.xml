@@ -2,6 +2,7 @@
   <scene>
     <object type="obj" filename="../models/teapot.obj" material="cyan">
       <position x="-0.75" y="-0.25" z="-3" />
+      <rotation z="45" />
       <scale x="1" y="1" z="1" />
     </object>
     <object type="sphere" radius="0.2" material="red">

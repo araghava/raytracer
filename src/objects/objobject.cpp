@@ -30,10 +30,10 @@ bool ObjObject::load() {
 
       for (size_t v = 0; v < fnum; v++) {
         tinyobj::index_t idx = shapes[i].mesh.indices[index_offset + v];
-        bBox.extend(UTILtransformVector(Vector(
+        bBox.extend(transform.applyPoint(Vector(
           attrib.vertices[3 * idx.vertex_index + 0],
           attrib.vertices[3 * idx.vertex_index + 1],
-          attrib.vertices[3 * idx.vertex_index + 2]), transform));
+          attrib.vertices[3 * idx.vertex_index + 2])));
         face[v] = idx;
       }
 

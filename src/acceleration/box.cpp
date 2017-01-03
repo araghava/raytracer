@@ -97,9 +97,9 @@ Box Box::constructFromFace(
   const tinyobj::attrib_t& attrib,
   const Transform& transform) {
   Box ret;
-  ret.extend(UTILtransformVector(UTILgetFaceVertex(face, attrib, 0), transform));
-  ret.extend(UTILtransformVector(UTILgetFaceVertex(face, attrib, 1), transform));
-  ret.extend(UTILtransformVector(UTILgetFaceVertex(face, attrib, 2), transform));
+  ret.extend(transform.applyPoint(UTILgetFaceVertex(face, attrib, 0)));
+  ret.extend(transform.applyPoint(UTILgetFaceVertex(face, attrib, 1)));
+  ret.extend(transform.applyPoint(UTILgetFaceVertex(face, attrib, 2)));
   return ret;
 }
 

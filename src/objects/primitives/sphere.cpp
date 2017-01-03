@@ -14,7 +14,7 @@ bool Sphere::intersect(const Ray& ray, Intersection& intersection) {
 
   // calculate the coefficients of the quadratic equation
   // au^2 + bu + c = 0, we seek the value of u for each intersection
-  const Vector displace = origin - transform.translation;
+  const Vector displace = origin - transform.applyPoint(Vector(0, 0, 0));
   const float a = direction.dot(direction);
   const float b = 2.0 * displace.dot(direction);
   const float c = displace.dot(displace) - radius * radius;
@@ -35,7 +35,7 @@ bool Sphere::intersect(const Ray& ray, Intersection& intersection) {
     return false;
 
   const Vector pt = origin + (direction * dist);
-  Vector nml = (pt - transform.translation).normalize();
+  Vector nml = (pt - transform.applyPoint(Vector(0, 0, 0))).normalize();
 
   const float intersect_dist = (pt - ray.origin).length2();
 
@@ -54,7 +54,7 @@ bool Sphere::intersect(const Ray& ray, Intersection& intersection) {
   intersection.ray = ray;
   intersection.finalized = true;
 
-  Vector ptt = (pt - transform.translation);
+  Vector ptt = (pt - transform.applyPoint(Vector(0, 0, 0)));
 
   // map sphere's surface to an image (spherical coordinates)
   intersection.texCoord = Vector(
@@ -73,5 +73,5 @@ Vector SphereLight::sample() const {
   Vector random_unit_vector(x, s * cos(angle), s * sin(angle));
 
   // a random point on the surface of the sphere
-  return position + random_unit_vector * radius;
+  return transform.applyPoint(Vector(0, 0, 0)) + random_unit_vector * radius;
 }

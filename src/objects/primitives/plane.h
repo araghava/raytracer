@@ -20,8 +20,10 @@ public:
 
   // Virtual implementations.
   virtual bool intersect(const Ray& ray, Intersection& intersection) {
-    auto& rot = transform.rotation;
-    Vector nml = ((rot * p2 - rot * p1).cross(rot * p3 - rot * p2)).normalize();
+    Vector rp1 = transform.applyPoint(p1);
+    Vector rp2 = transform.applyPoint(p2);
+    Vector rp3 = transform.applyPoint(p3);
+    Vector nml = ((rp2 - rp1).cross(rp3 - rp2)).normalize();
     if (ray.direction.dot(nml) > 0)
       nml = nml * -1;
 

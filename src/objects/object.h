@@ -42,10 +42,6 @@ public:
     return transform;
   }
 
-  void setCenter(const Vector& pt) {
-    transform.translation = pt;
-  }
-
   size_t getId() const {
     return objectId;
   }

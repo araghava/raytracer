@@ -30,12 +30,6 @@ class Matrix {
 
 Vector operator*(const Matrix& mat, const Vector& pt);
 
-struct Transform {
-  Matrix rotation;
-  Vector translation;
-  Vector scale = Vector(1, 1, 1);
-};
-
 // 4x4 matrix class (mostly taken from pbrt-v3)
 struct Matrix4 {
   Matrix4();
@@ -57,36 +51,36 @@ struct Matrix4 {
   float m[4][4];
 };
 
-class Transform2 {
+class Transform {
  public:
-  Transform2() = default;
-  Transform2(const float mat[4][4]);
-  Transform2(const Matrix4& mat);
-  Transform2(const Matrix4& mat, const Matrix4& matInv);
+  Transform() = default;
+  Transform(const float mat[4][4]);
+  Transform(const Matrix4& mat);
+  Transform(const Matrix4& mat, const Matrix4& matInv);
 
-  friend Transform2 Transform2Inverse(const Transform2& t);
-  friend Transform2 Transform2Transpose(const Transform2& t);
+  friend Transform TransformInverse(const Transform& t);
+  friend Transform TransformTranspose(const Transform& t);
   friend std::ostream& operator<<(std::ostream& os, const Matrix4& m);
 
-  bool operator==(const Transform2& t) const;
-  bool operator!=(const Transform2& t) const;
+  bool operator==(const Transform& t) const;
+  bool operator!=(const Transform& t) const;
 
   bool isIdentity() const;
   Matrix4 getMatrix() const;
   Matrix4 getInverseMatrix() const;
 
-  Transform2 operator*(const Transform2& o) const;
-  inline Vector applyPoint(const Vector& p) const;
-  inline Vector applyVector(const Vector& v) const;
+  Transform operator*(const Transform& o) const;
+  Vector applyPoint(const Vector& p) const;
+  Vector applyVector(const Vector& v) const;
 
-  static Transform2 translate(const Vector& delta);
-  static Transform2 scale(float x, float y, float z);
-  static Transform2 rotateX(float theta);
-  static Transform2 rotateY(float theta);
-  static Transform2 rotateZ(float theta);
-  static Transform2 rotate(float theta, const Vector& axis);
-  static Transform2 lookAt(const Vector& pos, const Vector& look, const Vector& up);
-  static Transform2 perspective(float fov, float znear, float zfar);
+  static Transform translate(const Vector& delta);
+  static Transform scale(float x, float y, float z);
+  static Transform rotateX(float theta);
+  static Transform rotateY(float theta);
+  static Transform rotateZ(float theta);
+  static Transform rotate(float theta, const Vector& axis);
+  static Transform lookAt(const Vector& pos, const Vector& look, const Vector& up);
+  static Transform perspective(float fov, float znear, float zfar);
 
  private:
   Matrix4 m, mInv;

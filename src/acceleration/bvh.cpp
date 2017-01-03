@@ -133,12 +133,12 @@ bool Bvh::intersectRecursive(
 // Uses Moller-Trumbore ray-triangle intersection algorithm.
 bool Bvh::rayTriangleIntersection(
   const Ray& ray, const size_t faceIdx, Intersection& intersection) {
-  Vector a = UTILtransformVector(
-    UTILgetFaceVertex((*faces)[faceIdx], *attrib, 0), objectPtr->getTransform());
-  Vector b = UTILtransformVector(
-    UTILgetFaceVertex((*faces)[faceIdx], *attrib, 1), objectPtr->getTransform());
-  Vector c = UTILtransformVector(
-    UTILgetFaceVertex((*faces)[faceIdx], *attrib, 2), objectPtr->getTransform());
+  Vector a = objectPtr->getTransform().applyPoint(
+    UTILgetFaceVertex((*faces)[faceIdx], *attrib, 0));
+  Vector b = objectPtr->getTransform().applyPoint(
+    UTILgetFaceVertex((*faces)[faceIdx], *attrib, 1));
+  Vector c = objectPtr->getTransform().applyPoint(
+    UTILgetFaceVertex((*faces)[faceIdx], *attrib, 2));
 
   Vector e1 = b - a, e2 = c - a;
   Vector D = ray.direction;
@@ -187,9 +187,12 @@ bool Bvh::rayTriangleIntersection(
             intersection.texCoord = UTILinterpolateFace(texCoords, bc);
           }
           std::vector<Vector> normals = {
-            UTILgetFaceNormal((*faces)[faceIdx], *attrib, 0),
-            UTILgetFaceNormal((*faces)[faceIdx], *attrib, 1),
-            UTILgetFaceNormal((*faces)[faceIdx], *attrib, 2)
+            objectPtr->getTransform().applyVector(
+              UTILgetFaceNormal((*faces)[faceIdx], *attrib, 0)),
+            objectPtr->getTransform().applyVector(
+              UTILgetFaceNormal((*faces)[faceIdx], *attrib, 1)),
+            objectPtr->getTransform().applyVector(
+              UTILgetFaceNormal((*faces)[faceIdx], *attrib, 2))
           };
           intersection.nml = UTILinterpolateFace(normals, bc);
           intersection.ray = ray;

@@ -22,10 +22,10 @@ public:
   virtual Vector sample() const = 0;
 
   void setTransform(const Transform& t) {
-    position = t.translation;
+    transform = t;
   }
 
-  Vector position;
+  Transform transform;
   Color color;
   float intensity;
 };
@@ -42,7 +42,7 @@ public:
   }
 
   virtual Vector sample() const {
-    return position;
+    return transform.applyPoint(Vector(0, 0, 0));
   }
 };
 

@@ -38,8 +38,3 @@ Vector UTILgetFaceTexCoord(
     attrib.texcoords[2 * face[v].texcoord_index + 0],
     attrib.texcoords[2 * face[v].texcoord_index + 1], 0);
 }
-
-Vector UTILtransformVector(
-  const Vector& vector, const Transform& transform) {
-  return transform.rotation * (vector * transform.scale) + transform.translation;
-}

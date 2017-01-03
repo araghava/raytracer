@@ -156,14 +156,15 @@ bool XMLParser::initializeObject(tinyxml2::XMLElement* const object) {
   while (child) {
     const auto& item = std::string(child->Value());
     if (item == "position") {
-      transform.translation = parseVectorItem(child);
+      transform = transform * Transform::translate(parseVectorItem(child));
     } else if (item == "rotation") {
       Vector rotationsByAxis = parseVectorItem(child);
-      transform.rotation = Matrix::fromRotation(Vector(1, 0, 0), rotationsByAxis[0])
-                         * Matrix::fromRotation(Vector(0, 1, 0), rotationsByAxis[1])
-                         * Matrix::fromRotation(Vector(0, 0, 1), rotationsByAxis[2]);
+      transform = transform * Transform::rotateX(rotationsByAxis[0]);
+      transform = transform * Transform::rotateY(rotationsByAxis[1]);
+      transform = transform * Transform::rotateZ(rotationsByAxis[2]);
     } else if (item == "scale") {
-      transform.scale = parseVectorItem(child);
+      auto v = parseVectorItem(child);
+      transform = transform * Transform::scale(v.x, v.y, v.z);
     } else {
       std::cout << "Unknown object field: " << item << std::endl;
       return false;
@@ -219,12 +220,12 @@ bool XMLParser::initializeLight(tinyxml2::XMLElement* const light) {
     }
 
     if (item == "position") {
-      transform.translation = parseVectorItem(child);
+      transform = transform * Transform::translate(parseVectorItem(child));
     } else if (item == "rotation") {
       Vector rotationsByAxis = parseVectorItem(child);
-      transform.rotation = Matrix::fromRotation(Vector(1, 0, 0), rotationsByAxis[0])
-                         * Matrix::fromRotation(Vector(0, 1, 0), rotationsByAxis[1])
-                         * Matrix::fromRotation(Vector(0, 0, 1), rotationsByAxis[2]);
+      transform = transform * Transform::rotateX(rotationsByAxis[0]);
+      transform = transform * Transform::rotateY(rotationsByAxis[1]);
+      transform = transform * Transform::rotateZ(rotationsByAxis[2]);
     } else {
       PARSE_ERROR("Unknown light field: " << item);
       return false;

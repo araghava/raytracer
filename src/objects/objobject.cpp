@@ -11,7 +11,7 @@ bool ObjObject::load() {
 
   std::string err;
   bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, fileName.c_str(),
-                              "../models/", /*triangulate=*/true);
+                              "models/", /*triangulate=*/true);
   if (!err.empty()) {
     std::cerr << err << std::endl;
   }

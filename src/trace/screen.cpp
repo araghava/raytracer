@@ -15,6 +15,7 @@ Screen::~Screen() {
 }
 
 bool Screen::writeImage(const std::string& file) {
+	std::cout << "writing file " << file.c_str();
   std::ofstream o(file.c_str(), std::ios::out | std::ios::binary);
 
   // Write the header.

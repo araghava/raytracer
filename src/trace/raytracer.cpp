@@ -52,7 +52,7 @@ void raytrace_threading_fn(RaytraceThreadParms* p) {
         }
       }
       avg /= (1.0 * p->raytracer->getCamera()->antialias * p->raytracer->getCamera()->antialias);
-      p->buffer[i][j] = avg;
+      (*p->buffer)[i][j] = avg;
     }
 
     p->progressReporter->report();
@@ -62,21 +62,17 @@ void raytrace_threading_fn(RaytraceThreadParms* p) {
 }
 
 bool Raytracer::render(const std::string& outpath) {
-  ProgressReporter progressReporter(camera->width);
-
-  int num_threads = std::max(numThreads, 1);
-  Screen screen(camera->width, camera->height);
-
   // Split up the work to be done based on how many threads are available.
-  int chunkSize = ceil(1.0 * camera->width / num_threads);
+  const int num_threads = std::max(numThreads, 1);
+  const int chunkSize = ceil(1.0 * camera->width / num_threads);
   std::thread threads[num_threads];
 
-  // Hold a color buffer here so that we don't have thread competition for
-  // screen.setPixel.
-  // After we join all the threads, write out the image.
-  Color **buffer = new Color *[camera->width];
-  for (int i = 0; i < camera->width; i++)
-    buffer[i] = new Color[camera->height];
+	std::vector<std::vector<Color>> buffer;
+	for (int i = 0; i < camera->width; i++) {
+		buffer.push_back(std::vector<Color>(camera->height));
+	}
+
+	auto progressReporter = std::make_shared<ProgressReporter>(camera->width);
 
   for (int i = 0; i < num_threads; i++) {
     const int start = i * chunkSize;
@@ -85,9 +81,8 @@ bool Raytracer::render(const std::string& outpath) {
     parms->raytracer = this;
     parms->start_row = start;
     parms->end_row = end;
-    parms->buffer = buffer;
-    parms->screen = &screen;
-    parms->progressReporter = &progressReporter;
+    parms->buffer = &buffer;
+    parms->progressReporter = progressReporter;
 
     threads[i] = std::thread(raytrace_threading_fn, parms);
   }
@@ -97,16 +92,14 @@ bool Raytracer::render(const std::string& outpath) {
     threads[i].join();
   }
 
-  progressReporter.finalize();
+  progressReporter->finalize();
 
-  for (int i = 0; i < camera->width; i++)
-    for (int j = 0; j < camera->height; j++)
+	Screen screen(camera->width, camera->height);
+  for (int i = 0; i < camera->width; i++) {
+    for (int j = 0; j < camera->height; j++) {
       screen.setPixel(i, j, buffer[i][j]);
-
-  // Free temp buffer memory.
-  for (int i = 0; i < camera->width; i++)
-    delete[] buffer[i];
-  delete[] buffer;
+		}
+	}
 
   screen.writeImage(outpath.c_str());
   return true;

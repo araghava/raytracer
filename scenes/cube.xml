@@ -1,6 +1,6 @@
 <xml>
   <scene>
-    <object type="obj" filename="../models/cube.obj">
+    <object type="obj" filename="models/cube.obj">
       <position x="2.5" y="-2" z="-8" />
     </object>
 
@@ -18,6 +18,6 @@
     <position x="0" y="0" z="0" />
     <direction x="0" y="0" z="-1" />
     <up x="0" y="0" z="1" />
-    <resolution width="512" height="512" antialias="2" />
+    <resolution width="256" height="256" antialias="2" />
   </camera>
 </xml>

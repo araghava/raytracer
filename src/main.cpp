@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
   parser.parse();
 
   out = DEFAULT_IMAGE_OUT;
-  if (out_file.empty()) {
+  if (!out_file.empty()) {
     out = out_file;
   }
 

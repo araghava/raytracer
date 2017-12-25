@@ -1,6 +1,6 @@
 <xml>
   <scene>
-    <object type="obj" filename="../models/teapot.obj">
+    <object type="obj" filename="models/teapot.obj">
       <position x="0" y="0" z="-2" />
       <scale x="1" y="1" z="1" />
     </object>

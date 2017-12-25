@@ -25,7 +25,7 @@ class XMLParser {
   const std::string fileName;
 
   std::unordered_map<size_t, std::string> objectMaterialMap;
-  std::unordered_map<std::string, std::shared_ptr<Material>> materialMap;;
+  std::unordered_map<std::string, std::shared_ptr<Material>> materialMap;
   std::vector<std::shared_ptr<Object>> objectList;
 };
 

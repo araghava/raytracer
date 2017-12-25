@@ -1,6 +1,7 @@
 #ifndef __RAY_TRACER_H
 #define __RAY_TRACER_H
 
+#include <memory>
 #include <string>
 #include <thread>
 #include <vector>
@@ -24,16 +25,14 @@ struct RenderParms {
 
 // Threading structure for raytracing.
 struct RaytraceThreadParms {
-  Raytracer* raytracer;
-  Screen* screen;
-
-  const RenderParms* parms;
-  ProgressReporter* progressReporter;
+	Raytracer* raytracer;
+	std::shared_ptr<RenderParms> renderParms;
+	std::shared_ptr<ProgressReporter> progressReporter;
 
   int start_row;
   int end_row;
 
-  Color** buffer;
+	std::vector<std::vector<Color>>* buffer;
 };
 
 class Raytracer {

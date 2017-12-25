@@ -43,10 +43,10 @@ all: $(BIN_PATH)/$(BIN_NAME)
 
 $(BIN_PATH)/$(BIN_NAME): $(OBJECTS)
 	@echo "Linking: $@"
-	$(CXX) $(OBJECTS) -o $@
+	$(CXX) $(OBJECTS) -o $@ -pthread
 
 -include $(DEPS)
 
 $(BUILD_PATH)/%.o: $(SRC_PATH)/%.$(SRC_EXT)
 	@echo "Compiling: $< -> $@"
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -MP -MMD -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -MP -MMD -c $< -o $@ -pthread

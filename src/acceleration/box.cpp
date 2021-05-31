@@ -108,9 +108,11 @@ int Box::getMaxDimension() const {
   float dy = upperBound.y - lowerBound.y;
   float dz = upperBound.z - lowerBound.z;
 
-  if (dx > dy && dx > dz) return 0;
-  if (dy > dx && dy > dz) return 1;
-  if (dz > dx && dz > dy) return 2;
-  return 0;
+  if (dx > dy && dx > dz) 
+    return 0;
+  else if (dy > dz) 
+    return 1;
+  else
+    return 2;
 }
 
